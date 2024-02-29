@@ -1,0 +1,4 @@
+# UVM Code Generator
+I finished this code generator as the extra task when I was doing my Student Thesis (Studienarbeit) during 2021-11 and 2022-07 at TU Dresden. It's the first time I learn UVM, both of my supervisors Dipl.-Ing. Matthias Lohrmann and Dipl.-Ing. Matthias Jobst gave me patient guidance, so that I can understand so much about UVM. Thanks for the suggestion on the UVM code generator, without their suggestion and helps, this generator would not have been developed, which I think is the best work in this Student Thesis.
+
+Since I am working mainly on ASIC Design field, and no plan working on Verification, this UVM code generator will not be further developed. I hope this simple code generator can work as an example which could help more people who just start leaning UVM. If this could help you, I will be very happy! :)
