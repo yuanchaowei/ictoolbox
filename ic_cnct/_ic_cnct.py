@@ -9,18 +9,21 @@ class ic_cnct:
 
     def gen_para_port(self, lst, default_connect):
         content = []
-        str1 = self.indent + "."        # indent
-        num2 = len(max(lst, key=len))   # max length port name
-        str2 = ""                       # port name
-        str3 = "("                      # left bracket
-        num4 = 0                        # length in bracket, 0 if no default port connected
-        str4 = ""                       # default port or no
-        str5 = "),"                     # right bracket
-        for i in range(len(lst)):
-            str2 = lst[i]
-            if default_connect: num4 = num2; str4 = f"{lst[i]}"
-            if i == len(lst) - 1 : str5 = ")"
-            content.append("%s%-*s %s%-*s%s" %(str1, num2, str2, str3, num4, str4, str5))
+        try:
+            str1 = self.indent + "."        # indent
+            num2 = len(max(lst, key=len))   # max length port name
+            str2 = ""                       # port name
+            str3 = "("                      # left bracket
+            num4 = 0                        # length in bracket, 0 if no default port connected
+            str4 = ""                       # default port or no
+            str5 = "),"                     # right bracket
+            for i in range(len(lst)):
+                str2 = lst[i]
+                if default_connect: num4 = num2; str4 = f"{lst[i]}"
+                if i == len(lst) - 1 : str5 = ")"
+                content.append("%s%-*s %s%-*s%s" %(str1, num2, str2, str3, num4, str4, str5))
+        except:
+            print("Input list in gen_para_port function is empty, propably no parameter")
         return content 
 
 
