@@ -1,0 +1,80 @@
+{
+    "gen_info": 
+    { 
+        "top_name": "top_xmpl",
+        "filelist_path": "/home/chaov/ictoolbox/test/rtl/filelist.txt",
+        "filelist":
+        {
+            "xmpl_dsp_msf"  : "/home/chaov/ictoolbox/test/rtl/xmpl_dsp_ctrl/xmpl_dsp_msf.sv",
+            "xmpl_dsp_fsm"  : "/home/chaov/ictoolbox/test/rtl/xmpl_dsp_ctrl/xmpl_dsp_fsm.sv",
+            "xmpl_riscv"    : "/home/chaov/ictoolbox/test/rtl/xmpl_processor/xmpl_riscv.sv",
+            "xmpl_loongson" : "/home/chaov/ictoolbox/test/rtl/xmpl_processor/xmpl_loongson.sv",
+            "xmpl_stone"    : "/home/chaov/ictoolbox/test/rtl/xmpl_processor/xmpl_stone.sv",
+            "xmpl_fft"      : "/home/chaov/ictoolbox/test/rtl/xmpl_dsp_core/xmpl_fft.sv",
+            "xmpl_flt"      : "/home/chaov/ictoolbox/test/rtl/xmpl_dsp_core/xmpl_flt.sv",
+            "xmpl_cic"      : "/home/chaov/ictoolbox/test/rtl/xmpl_dsp_core/xmpl_cic.sv",
+            "xmpl_sram"     : "/home/chaov/ictoolbox/test/rtl/xmpl_sram/xmpl_sram.sv"
+        }
+    },
+    "gen_structure": 
+    {
+        "top_xmpl": {
+            "xmpl_peri": {
+                "xmpl_dsp": {
+                    "xmpl_dsp_core": [
+                        "xmpl_fft",
+                        "xmpl_flt",
+                        "xmpl_cic"],
+                    "xmpl_dsp_ctrl": [
+                        "xmpl_dsp_msf",
+                        "xmpl_dsp_fsm"]
+                },
+                "xmpl_sram": [
+                    "xmpl_sram"]
+            },
+            "xmpl_processor": [
+                "xmpl_riscv",
+                "xmpl_loongson",
+                "xmpl_stone"
+            ]
+        }
+    },
+    "gen_anchor":
+    [
+        "// Anchor gen_incl_imp",
+        "// Anchor gen_parameter",
+        "// Anchor gen_localpara",
+        "// Anchor gen_struct",
+        "// Anchor gen_wiring begin",
+        "// Anchor gen_wiring end",
+        "// Anchor gen_instances"
+    ],
+    "gen_incl_imp":
+    {
+        "include": ["asuihd.sv"],
+        "import": ["pkg_riscv_common"]
+    },
+    "gen_parameter":
+    {
+        "parameter":  ["TEST_PARAMETER1", "TEST_PARAMETER2"]
+    },
+    "gen_localpara":
+    {
+        "localparam": ["TEST_LOCALPARA1", "TEST_LOCALPARA2"]
+    },
+    "gen_struct":
+    {
+        "struct":
+        {
+            "struct_stall"  : "stall",
+            "struct_kill"   : "kill",
+            "struct_bubble" : "bubble"
+        }
+    },
+    "gen_wiring":
+    [
+        ["module_name",  "portname", "cnctname",        "cncttype", "seepoint",    "wirename"],
+        ["u01_module01", "mo01_a_i", "mo01_a_s",        "wire",     "unit01",      "NONE"],
+        ["u01_module01", "mo01_b_i", "un01_mo01_b_i",   "port",     "lv2_part1",   "un01_mo01_b_s"]
+    ]
+}

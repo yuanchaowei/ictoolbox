@@ -1,0 +1,9 @@
+/home/chaov/ictoolbox/test/rtl/xmpl_dsp_ctrl/xmpl_dsp_msf.sv
+/home/chaov/ictoolbox/test/rtl/xmpl_dsp_ctrl/xmpl_dsp_fsm.sv
+/home/chaov/ictoolbox/test/rtl/xmpl_processor/xmpl_riscv.sv
+/home/chaov/ictoolbox/test/rtl/xmpl_processor/xmpl_loongson.sv
+/home/chaov/ictoolbox/test/rtl/xmpl_processor/xmpl_stone.sv
+/home/chaov/ictoolbox/test/rtl/xmpl_dsp_core/xmpl_fft.sv
+/home/chaov/ictoolbox/test/rtl/xmpl_dsp_core/xmpl_flt.sv
+/home/chaov/ictoolbox/test/rtl/xmpl_dsp_core/xmpl_cic.sv
+/home/chaov/ictoolbox/test/rtl/xmpl_sram/xmpl_sram.sv
