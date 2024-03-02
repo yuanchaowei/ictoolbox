@@ -13,9 +13,11 @@ class ic_cnct:
         self.gen_outpath = []
         self.gen_content = []
 
+        self.top_archi = []
+
         self.gen_info           = [] 
         self.gen_info_filelist  = [] 
-        self.gen_structure      = [] 
+        self.gen_archi          = [] 
         self.gen_anchor         = [] 
         self.gen_incl_imp       = [] 
         self.gen_parameter      = [] 
@@ -125,7 +127,7 @@ class ic_cnct:
     def _get_info(self):
         self.gen_info           = self.gen_json['gen_info']
         self.gen_info_filelist  = self.gen_json['gen_info']['filelist']
-        self.gen_structure      = self.gen_json['gen_structure']
+        self.gen_archi          = self.gen_json['gen_archi']
         self.gen_anchor         = self.gen_json['gen_anchor']
         self.gen_incl_imp       = self.gen_json['gen_incl_imp']
         self.gen_parameter      = self.gen_json['gen_parameter']
@@ -134,9 +136,70 @@ class ic_cnct:
         self.gen_wiring         = self.gen_json['gen_wiring']
         #if self.debug: print(self.gen_structure)
 
+    def _extract_archi(self):
+        dict_archi = self.gen_archi
+        
+        #
+        # Explanation
+        #
+
+        # After the first loop, following dict is changed to
+        # {
+        #     "top_xmpl": {
+        #         "xmpl_peri": {
+        #             "xmpl_dsp": {
+        #                 "xmpl_dsp_core": {
+        #                     "xmpl_fft": "",
+        #                     "xmpl_flt": "",
+        #                     "xmpl_cic": ""},
+        #                 "xmpl_dsp_ctrl": {
+        #                     "xmpl_dsp_msf": "",
+        #                     "xmpl_dsp_fsm": ""}},
+        #             "xmpl_sram": ""},
+        #         "xmpl_processor": {
+        #             "xmpl_riscv": "",
+        #             "xmpl_loongson": "",
+        #             "xmpl_stone": ""}}
+        # },
+        # {
+        #     "xmpl_peri": {
+        #         "xmpl_dsp": {
+        #             "xmpl_dsp_core": {
+        #                 "xmpl_fft": "",
+        #                 "xmpl_flt": "",
+        #                 "xmpl_cic": ""},
+        #             "xmpl_dsp_ctrl": {
+        #                 "xmpl_dsp_msf": "",
+        #                 "xmpl_dsp_fsm": ""}},
+        #         "xmpl_sram": ""},
+        #     "xmpl_processor": {
+        #         "xmpl_riscv": "",
+        #         "xmpl_loongson": "",
+        #         "xmpl_stone": ""}
+        # },
+
+        # while (1):
+        for i in range(10): # maxmal level is 10, safer choice than while 1
+            nxt_dict_archi = []
+            module_s = list(dict_archi.keys())
+            for module in module_s:
+                try: # if basic module is met(""), there will no keys, so skip and not append
+                    next_keys = list(dict_archi[module].keys())
+                    self.top_archi.append({module: next_keys})
+                    nxt_dict_archi.append(dict_archi[module])
+                except:
+                    pass
+            try:
+                dict_archi = nxt_dict_archi[0] # The dict is updated in each loop, process shown above
+            except:
+                break
+        #print(self.top_archi)
+        #for i in self.top_archi:
+        #    print(i)
+
+
     def _cnct_blks_gen1(self):
         content = self.gen_content
-        print(self.gen_structure)
 
 
         # Add the includes and imports firstly
@@ -173,6 +236,7 @@ class ic_cnct:
         self.debug = debug
         self._cnct_blks_readjson(jsonfile, output2path)
         self._get_info()
+        self._extract_archi()
         self._cnct_blks_gen1()
         #if output2path:
         #    with open(output2path, "w") as f:

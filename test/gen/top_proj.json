@@ -16,28 +16,23 @@
             "xmpl_sram"     : "/home/chaov/ictoolbox/test/rtl/xmpl_sram/xmpl_sram.sv"
         }
     },
-    "gen_structure": 
+    "gen_archi": 
     {
         "top_xmpl": {
             "xmpl_peri": {
                 "xmpl_dsp": {
-                    "xmpl_dsp_core": [
-                        "xmpl_fft",
-                        "xmpl_flt",
-                        "xmpl_cic"],
-                    "xmpl_dsp_ctrl": [
-                        "xmpl_dsp_msf",
-                        "xmpl_dsp_fsm"]
-                },
-                "xmpl_sram": [
-                    "xmpl_sram"]
-            },
-            "xmpl_processor": [
-                "xmpl_riscv",
-                "xmpl_loongson",
-                "xmpl_stone"
-            ]
-        }
+                    "xmpl_dsp_core": {
+                        "xmpl_fft": "",
+                        "xmpl_flt": "",
+                        "xmpl_cic": ""},
+                    "xmpl_dsp_ctrl": {
+                        "xmpl_dsp_msf": "",
+                        "xmpl_dsp_fsm": ""}},
+                "xmpl_sram": ""},
+            "xmpl_processor": {
+                "xmpl_riscv": "",
+                "xmpl_loongson": "",
+                "xmpl_stone": ""}}
     },
     "gen_anchor":
     [
