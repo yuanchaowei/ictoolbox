@@ -1,5 +1,5 @@
 import re
-import sys
+import os, sys
 import json
 import pandas as pd
 import numpy as np
@@ -11,9 +11,9 @@ class ic_cnct:
         self.indent = "    "    # later change
         self.debug = False
 
-        self.gen_json = []
+        self.gen_load_json = []
         self.gen_outpath = []
-        self.gen_content = []
+        #self.gen_content = []
 
         self.top_archi = []
         self.top_instances = []
@@ -27,6 +27,7 @@ class ic_cnct:
         self.gen_localpara      = [] 
         self.gen_struct         = [] 
         self.gen_wiring         = [] 
+        self.gen_code           = []
  
     # Generation of para and ports in format .xxx(xxx)
     def gen_para_port(self, lst, default_connect):
@@ -122,21 +123,20 @@ class ic_cnct:
     # Connect multiple modules
     def _cnct_blks_readjson(self, jsonfile, output2path):
         f = open(jsonfile)
-        self.gen_json = json.load(f)
+        self.gen_load_json = json.load(f)
         f.close()
-        self.gen_outpath = output2path
-        #if self.debug: print("all json info is:\n", self.gen_json)
+        self.gen_outpath        = output2path
 
-    def _get_info(self):
-        self.gen_info           = self.gen_json['gen_info']
-        self.gen_info_filelist  = self.gen_json['gen_info']['filelist']
-        self.gen_archi          = self.gen_json['gen_archi']
-        self.gen_anchor         = self.gen_json['gen_anchor']
-        self.gen_incl_imp       = self.gen_json['gen_incl_imp']
-        self.gen_parameter      = self.gen_json['gen_parameter']
-        self.gen_localpara      = self.gen_json['gen_localpara']
-        self.gen_struct         = self.gen_json['gen_struct']
-        self.gen_wiring         = self.gen_json['gen_wiring']
+        self.gen_info           = self.gen_load_json['gen_info']
+        self.gen_info_filelist  = self.gen_load_json['gen_info']['filelist']
+        self.gen_archi          = self.gen_load_json['gen_archi']
+        self.gen_anchor         = self.gen_load_json['gen_anchor']
+        self.gen_incl_imp       = self.gen_load_json['gen_incl_imp']
+        self.gen_parameter      = self.gen_load_json['gen_parameter']
+        self.gen_localpara      = self.gen_load_json['gen_localpara']
+        self.gen_struct         = self.gen_load_json['gen_struct']
+        self.gen_wiring         = self.gen_load_json['gen_wiring']
+        self.gen_code           = self.gen_load_json['gen_code']
         #if self.debug: print(self.gen_structure)
 
     def _extract_archi(self):
@@ -199,58 +199,87 @@ class ic_cnct:
             if dict_archi == {}:
                 break
 
+        self.top_instances = pd.DataFrame(np.array(self.top_instances), columns=['instance_name', 'module_name'])
+        print("\nConnections in each level:")
         for i in range(len(self.top_archi)):
-            print(f"Connections No.{i}: {self.top_archi[i]}")
-        for i in range(len(self.top_instances)):
-            print(f"Basic module matching No.{i}: {self.top_instances[i]}")
+            print(f"Level Connections No.{i+1}: {self.top_archi[i]}")
+        print("\nBasic instances and its root module:")
+        print(self.top_instances)
+        #print(self.top_archi)
 
-    def _cnct_blks_gen1(self):
-        content = self.gen_content
+    def _extract_wiring(self):
         wiring = np.array(self.gen_wiring)
-        df = pd.DataFrame(wiring[1:], columns=wiring[0])
-        df.style.set_properties(**{'text-align': 'left'})
-        print(df)
+        self.gen_wiring = pd.DataFrame(wiring[1:], columns=wiring[0])
+        #print(self.gen_wiring)
 
-        # Add the includes and imports firstly
-        #if self.gen_incl_imp['include'] != []:
-        #    for item in self.gen_incl_imp['include']:
-        #        content.append(f"`include \"{item}\"")
-        #if self.gen_incl_imp['import'] != []:
-        #    for item in self.gen_incl_imp['import']:
-        #        content.append(f"import {item}::*;")
-        #content.append(f"\n")
+    def _cnct_blks_main(self):
+        for idx in range(len(self.top_archi))[:]:
+            content = []
+            dict_blk = self.top_archi[-idx-1] # the gen should backward
+            gen_module_name = list(dict_blk.keys())[0] # the module name
+            gen_sub_lvl_modules = list(dict_blk.values())[0] # sub modules (instances) should in module
+            print(f"\nStart gen block: {gen_module_name}")
+            print(f"Needed sub level modules: {gen_sub_lvl_modules}")
 
-        # create top module name
-        #content.append(f"module {self.gen_info['gen_name']} #(")
-        #content.append(f")(")
-        #content.append(f");\n")
+            # create top module name and anchors
+            content.append(self.gen_anchor["anchor_gen_incl_imp"])
+            content.append(f"module {gen_module_name} #(")
+            content.append(self.gen_anchor["anchor_gen_parameter"])
+            content.append(f")(")
+            content.append(self.gen_anchor["anchor_gen_port"])
+            content.append(f");\n")
 
-        # gen sub modules
-        #for i in range(len(self.gen_sub_modules)):
-        #    module_name   = self.gen_sub_modules[i]['module_name']
-        #    instance_name = self.gen_sub_modules[i]['instance_name']
-        #    if self.gen_sub_modules[i]['instance_name'] == "":
-        #        instance_name = f"i_{self.gen_sub_modules[i]['module_name']}"
+            # gen instances sub modules
+            for i in range(len(gen_sub_lvl_modules)):
+                instance_name = gen_sub_lvl_modules[i]
+                # check if is a root module name
+                if self.top_instances['instance_name'].isin([instance_name]).any():#.any():
+                    idx_instance = self.top_instances.index[self.top_instances['instance_name'] == instance_name].tolist()
+                    module_name = self.top_instances['module_name'][idx_instance].tolist()[0]
+                    try: # check if root module is given in filelist
+                        path2module = self.gen_info_filelist[module_name]
+                    except:
+                        sys.exit(f"{module_name}, Module path is not given in filelist!!")
+                    print(f"Root module detected: {path2module} {instance_name}")
+                else: # if not a root module name, then it is a generated module
+                    module_name   = instance_name
+                    instance_name = f"i_{module_name}"
+                    if os.path.isfile(f"{self.gen_outpath}/{module_name}.sv"): # check if module already generated
+                        path2module = f"{self.gen_outpath}/{module_name}.sv"
+                    else:
+                        sys.exit(f"{module_name}, Module is not correctly generated!!")
+                    print(f"Gen  module detected: {path2module} {instance_name} ")
 
-        #    if self.gen_info_filelist[module_name] == "":
-        #        sys.exit(f"module path is not given in filelist!!")
-        #    else:
-        #        path2module = self.gen_info_filelist[module_name]
-        #    content.append(f"// Anchor {instance_name}")
-        #    content = content + self.cnct_blk(module_name, instance_name, path2module, default_connect=False, doprint=False)
-        #    content.append(f"\n")
-        #self.gen_content = content
+                # instantiation
+                content.append(f"// Anchor {instance_name}")
+                content = content + self.cnct_blk(path2module, instance_name, default_connect=False, doprint=False)
+                content.append(f"\n")
+
+            # wiring - most important part
+            self._cnct_blks_wiring()
+
+            # endmodule
+            content.append(f"endmodule")
+
+            # write the file
+            with open(f"{self.gen_outpath}/{gen_module_name}.sv", "w") as f:
+                for line in content:
+                    f.write(f"{line}\n")
+
+    def _cnct_blks_wiring(self):
+        pass
+
+
 
     def cnct_blks(self, jsonfile, output2path, debug=False):
         self.debug = debug
         # Read json file which has all connection setups
         self._cnct_blks_readjson(jsonfile, output2path)
-        # Get info from read json file
-        self._get_info()
         # Extract the project architecture, important setp for auto-connection
         self._extract_archi()
+        self._extract_wiring()
         # Connect blocks, step 1
-        self._cnct_blks_gen1()
+        self._cnct_blks_main()
         #if output2path:
         #    with open(output2path, "w") as f:
         #        for line in self.gen_content:

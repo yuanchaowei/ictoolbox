@@ -32,5 +32,5 @@ if False:
 # To gen with json
 ##########################
 
-ic_cnct_i.cnct_blks(f"{BASEPATH}/ictoolbox/test/gen/top_proj.json", f"{BASEPATH}/ictoolbox/test/gen/", debug=True)
+ic_cnct_i.cnct_blks(f"{BASEPATH}/ictoolbox/test/gen/top_proj.json", f"{BASEPATH}/ictoolbox/test/gen", debug=True)
 
