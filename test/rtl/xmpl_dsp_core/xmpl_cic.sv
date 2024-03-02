@@ -9,7 +9,7 @@ module xmpl_cic #(
     input  [12 - 1 : 0]             xmpl_cic_b_i, //asdwad
 
     // 1df1234
-    input  [32 - 1 : 0]             xmpl_cic_c_0,
+    input  [32 - 1 : 0]             xmpl_cic_c_o,
     input  [32 - 1 : 0]             xmpl_cic_status_o
 
 );

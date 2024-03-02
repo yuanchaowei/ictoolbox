@@ -9,7 +9,7 @@ module xmpl_flt #(
     input  [12 - 1 : 0]             xmpl_flt_b_i, //asdwad
 
     // 1df1234
-    input  [32 - 1 : 0]             xmpl_flt_c_0,
+    input  [32 - 1 : 0]             xmpl_flt_c_o,
     input  [32 - 1 : 0]             xmpl_flt_status_o
 
 );

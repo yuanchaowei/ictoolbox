@@ -1,6 +1,8 @@
 import re
 import sys
 import json
+import pandas as pd
+import numpy as np
 
 class ic_cnct:
     def __init__(self, **kwargs):
@@ -14,6 +16,7 @@ class ic_cnct:
         self.gen_content = []
 
         self.top_archi = []
+        self.top_instances = []
 
         self.gen_info           = [] 
         self.gen_info_filelist  = [] 
@@ -180,27 +183,33 @@ class ic_cnct:
 
         # while (1):
         for i in range(10): # maxmal level is 10, safer choice than while 1
-            nxt_dict_archi = []
+            nxt_dict_archi = {}
             module_s = list(dict_archi.keys())
             for module in module_s:
-                try: # if basic module is met(""), there will no keys, so skip and not append
+                try: # if basic module is met("real module name"), there will no keys, so skip and not append
                     next_keys = list(dict_archi[module].keys())
                     self.top_archi.append({module: next_keys})
-                    nxt_dict_archi.append(dict_archi[module])
+                    nxt_dict_archi = {**nxt_dict_archi, **dict_archi[module]} 
                 except:
+                    #dict_single = {module: dict_archi[module]}
+                    #nxt_dict_archi = {**nxt_dict_archi[0], **dict_single}
+                    self.top_instances.append([module, dict_archi[module]])
                     pass
-            try:
-                dict_archi = nxt_dict_archi[0] # The dict is updated in each loop, process shown above
-            except:
+            dict_archi = nxt_dict_archi # The dict is updated in each loop, process shown above
+            if dict_archi == {}:
                 break
-        #print(self.top_archi)
-        #for i in self.top_archi:
-        #    print(i)
 
+        for i in range(len(self.top_archi)):
+            print(f"Connections No.{i}: {self.top_archi[i]}")
+        for i in range(len(self.top_instances)):
+            print(f"Basic module matching No.{i}: {self.top_instances[i]}")
 
     def _cnct_blks_gen1(self):
         content = self.gen_content
-
+        wiring = np.array(self.gen_wiring)
+        df = pd.DataFrame(wiring[1:], columns=wiring[0])
+        df.style.set_properties(**{'text-align': 'left'})
+        print(df)
 
         # Add the includes and imports firstly
         #if self.gen_incl_imp['include'] != []:
@@ -234,9 +243,13 @@ class ic_cnct:
 
     def cnct_blks(self, jsonfile, output2path, debug=False):
         self.debug = debug
+        # Read json file which has all connection setups
         self._cnct_blks_readjson(jsonfile, output2path)
+        # Get info from read json file
         self._get_info()
+        # Extract the project architecture, important setp for auto-connection
         self._extract_archi()
+        # Connect blocks, step 1
         self._cnct_blks_gen1()
         #if output2path:
         #    with open(output2path, "w") as f:
