@@ -46,8 +46,8 @@ class ic_cnct:
     # Extract the parameters and ports
     def get_para_port(self, path2module, detail=False):
         module_name = None
-        dic_para = {"parameter": [], "default_value": []}
-        dic_port = {"direction": [], "width": [], "portname": []}
+        dic_para = {'parameter': [], 'default_value': []}
+        dic_port = {'direction': [], 'width': [], 'portname': []}
         with open(path2module) as file_module:
             for line in file_module:
                 line = re.sub(r"//.*", "", line) # delete all contents with beginning //
@@ -55,10 +55,10 @@ class ic_cnct:
                     module_name = line.split()[1]
                 elif "parameter" in line: # Get the parameters
                     line_split = line.split()
-                    dic_para["parameter"].append(line_split[1])
+                    dic_para['parameter'].append(line_split[1])
                     try:    # if default value exists, add. Otherwise add None
                         if line[3]:
-                            dic_para["default_value"].append(line_split[3])
+                            dic_para['default_value'].append(line_split[3])
                     except:
                         sys.exit(f"{line_split[1]} has no default value, please add!")
                 elif "input" in line or "output" in line: # get port
@@ -66,20 +66,20 @@ class ic_cnct:
                         sys.exit(f"Please split the ); to the newline!!!")
     
                     line_split = line.split() # split with spaces
-                    dic_port["direction"].append(line_split[0]) # input and ooutput is always located in first place
+                    dic_port['direction'].append(line_split[0]) # input and ooutput is always located in first place
                     width = re.search(r"(\[.*\])", line) # find the [WIDTH:0] content and extract it
                     if width == None:
-                        dic_port["width"].append("1")
+                        dic_port['width'].append("1")
                     else:
                         width = width.group()
-                        dic_port["width"].append(width)
+                        dic_port['width'].append(width)
                         line = line.replace(width, "")  # delete the width for port name extraction
                     line = line.replace("input", "")
                     line = line.replace("output", "")
                     line = line.replace(",", "")
                     line_split = line.split()
                     for portname in line_split:
-                        dic_port["portname"].append(portname)
+                        dic_port['portname'].append(portname)
                 if ");" in line: # The end of module should be ");" and in new line
                     break
 
@@ -89,7 +89,7 @@ class ic_cnct:
         if detail:
             return module_name, dic_para, dic_port
         else:
-            return module_name, dic_para["parameter"], dic_port["portname"]
+            return module_name, dic_para['parameter'], dic_port['portname']
     
     # Connect the single module
     def cnct_blk(self, path2module, instance_name="", output2path="", default_connect=False, doprint=True):
@@ -123,26 +123,28 @@ class ic_cnct:
         #if self.debug: print("all json info is:\n", self.gen_json)
 
     def _get_info(self):
-        self.gen_info           = self.gen_json["gen_info"]
-        self.gen_info_filelist  = self.gen_json["gen_info"]["filelist"]
-        self.gen_structure      = self.gen_json["gen_structure"]
-        self.gen_anchor         = self.gen_json["gen_anchor"]
-        self.gen_incl_imp       = self.gen_json["gen_incl_imp"]
-        self.gen_parameter      = self.gen_json["gen_parameter"]
-        self.gen_localpara      = self.gen_json["gen_localpara"]
-        self.gen_struct         = self.gen_json["gen_struct"]
-        self.gen_wiring         = self.gen_json["gen_wiring"]
-        if self.debug: print(self.gen_structure)
+        self.gen_info           = self.gen_json['gen_info']
+        self.gen_info_filelist  = self.gen_json['gen_info']['filelist']
+        self.gen_structure      = self.gen_json['gen_structure']
+        self.gen_anchor         = self.gen_json['gen_anchor']
+        self.gen_incl_imp       = self.gen_json['gen_incl_imp']
+        self.gen_parameter      = self.gen_json['gen_parameter']
+        self.gen_localpara      = self.gen_json['gen_localpara']
+        self.gen_struct         = self.gen_json['gen_struct']
+        self.gen_wiring         = self.gen_json['gen_wiring']
+        #if self.debug: print(self.gen_structure)
 
     def _cnct_blks_gen1(self):
         content = self.gen_content
+        print(self.gen_structure)
+
 
         # Add the includes and imports firstly
-        #if self.gen_incl_imp["include"] != []:
-        #    for item in self.gen_incl_imp["include"]:
+        #if self.gen_incl_imp['include'] != []:
+        #    for item in self.gen_incl_imp['include']:
         #        content.append(f"`include \"{item}\"")
-        #if self.gen_incl_imp["import"] != []:
-        #    for item in self.gen_incl_imp["import"]:
+        #if self.gen_incl_imp['import'] != []:
+        #    for item in self.gen_incl_imp['import']:
         #        content.append(f"import {item}::*;")
         #content.append(f"\n")
 
@@ -155,7 +157,7 @@ class ic_cnct:
         #for i in range(len(self.gen_sub_modules)):
         #    module_name   = self.gen_sub_modules[i]['module_name']
         #    instance_name = self.gen_sub_modules[i]['instance_name']
-        #    if self.gen_sub_modules[i]["instance_name"] == "":
+        #    if self.gen_sub_modules[i]['instance_name'] == "":
         #        instance_name = f"i_{self.gen_sub_modules[i]['module_name']}"
 
         #    if self.gen_info_filelist[module_name] == "":
