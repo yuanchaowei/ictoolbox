@@ -12,7 +12,7 @@ module xmpl_dsp_fsm #(
 
     output              en_xmpl_dsp_cic_o,
     output              en_xmpl_dsp_fft_o,
-    output              en_xmpl_dsp_dlt_o,
+    output              en_xmpl_dsp_flt_o,
 
     output [14 - 1 : 0] xmpl_dsp_fsm_state_o
 

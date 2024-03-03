@@ -8,7 +8,7 @@ module xmpl_sram #(
     input                           en_sram_i,
     input  [12 - 1 : 0]             sram_addr_i, //asdwad
 
-    input                           sram_rw_i
+    input                           sram_rw_i,
     // 1df1234
     input  [32 - 1 : 0]             sram_data_i,
     output [32 - 1 : 0]             sram_data_o

@@ -17,6 +17,12 @@ module xmpl_riscv #(
     output [8 - 1 : 0]      riscv_dsp_flt_b8_o,
     input  [23 - 1 : 0]     riscv_dsp_flt_c23_i,
 
+    output                  riscv_sram_en_sram_o,
+    output [12 - 1 : 0]     riscv_sram_sram_addr_o,
+    output                  riscv_sram_sram_rw_o,
+    output [32 - 1 : 0]     riscv_sram_sram_data_o,
+    input  [32 - 1 : 0]     riscv_sram_sram_data_i,
+
 
     input                   riscv_en_dsp_fsm_o,
     input  [14 - 1 : 0]     riscv_dsp_fsm_state_i,

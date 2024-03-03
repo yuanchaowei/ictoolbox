@@ -3,6 +3,7 @@ import os, sys
 import json
 import pandas as pd
 import numpy as np
+import warnings
 
 class ic_cnct:
     def __init__(self, **kwargs):
@@ -217,6 +218,7 @@ class ic_cnct:
         #       Because the code will avoid wrong location. The connection will find "Anchor".
         # The port names in "cnct_name" with "see_point" MUST have no duplicaton!!! 
         #       Becasue there will be no code and no locating by "Anchor"
+        #       So the cnct_name must be 
         #
         
         # Find all index with wire_name
@@ -230,6 +232,9 @@ class ic_cnct:
         for i in range(len(df)):
             if df['cnct_name'][i] in df['cnct_name'][1 + i:].tolist():
                 sys.exit(f"In \"cnct_name\" port name {df['cnct_name'][i]} is duplicated.")
+
+    def _extract_portinfo(self):
+        pass
 
 
 
@@ -271,7 +276,7 @@ class ic_cnct:
                     print(f"Gen  module detected: {path2module} {instance_name} ")
 
                 # instantiation
-                content.append(f"// Anchor {instance_name}")
+                content.append(f"// Anchor {module_name} {instance_name}")
                 content = content + self.cnct_blk(path2module, instance_name, default_connect=False, doprint=False)
                 content.append(f"\n")
 
@@ -285,9 +290,6 @@ class ic_cnct:
             with open(f"{self.gen_outpath}/{gen_module_name}.sv", "w") as f:
                 for line in content:
                     f.write(f"{line}\n")
-
-    def _cnct_blks_wiring_get_width(self, path2module, port_name):
-        pass
 
     def _cnct_blks_wiring(self, wiring_module, wiring_instances, wiring_content):
         print(f"\nStart wiring the {wiring_instances} in {wiring_module}")
@@ -305,16 +307,51 @@ class ic_cnct:
         #print(wiring_this_level)
         #print(wiring_low_level)
 
-        for i in range(len(wiring_this_level)):
+        for i in range(len(wiring_this_level)): # loop to connect each port_name to cnct_name
             module_name = wiring_this_level['module_name'][i]
             port_name   = wiring_this_level['port_name'][i]
             cnct_name   = wiring_this_level['cnct_name'][i]
             cnct_type   = wiring_this_level['cnct_type'][i]
             see_point   = wiring_this_level['see_point'][i]
             wire_name   = wiring_this_level['wire_name'][i]
+            found_anchor= False
+            for idx_line in range(len(wiring_content)):
+                if "Anchor" in wiring_content[idx_line] and module_name in wiring_content[idx_line]:
+                    found_anchor = True
+                if found_anchor:
+                    if port_name in wiring_content[idx_line]:
+                        if "()" in wiring_content[idx_line]:
+                            wiring_content[idx_line] = wiring_content[idx_line].replace("()", f"({cnct_name})")
+                            break
+                        else:
+                            warnings.warn(f"Port {port_name} in {module_name} is already connected")
+                    elif ");" in wiring_content[idx_line]:
+                        warnings.warn(f"Port {port_name} in {module_name} is not found")
+                        break
+            #if cnct_type == "port":
+            #    found_anchor = False
+            #    anchor_line = None
+            #    for idx_line in range(len(wiring_content)):
+            #        if self.gen_anchor['anchor_gen_port'] in wiring_content[idx_line]:
+            #            found_anchor = True
+            #            anchor_line = idx_line
+            #            break
 
-        #for item in module_name:
-        #    pass
+            #    insert_content = f"{cnct_name},"
+            #    wiring_content.insert(anchor_line, insert_content)
+
+
+
+
+                    
+
+        for i in range(len(wiring_low_level)):
+            module_name = wiring_low_level['module_name'][i]
+            port_name   = wiring_low_level['port_name'][i]
+            cnct_name   = wiring_low_level['cnct_name'][i]
+            cnct_type   = wiring_low_level['cnct_type'][i]
+            see_point   = wiring_low_level['see_point'][i]
+            wire_name   = wiring_low_level['wire_name'][i]
 
 
         return wiring_content
