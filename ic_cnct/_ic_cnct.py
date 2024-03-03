@@ -212,9 +212,29 @@ class ic_cnct:
         wiring = np.array(self.gen_wiring)
         self.gen_wiring = pd.DataFrame(wiring[1:], columns=wiring[0])
         #print(self.gen_wiring)
+        #
+        # The "port_name" is "not necessary" to avoid the duplication in different instances.
+        #       Because the code will avoid wrong location. The connection will find "Anchor".
+        # The port names in "cnct_name" with "see_point" MUST have no duplicaton!!! 
+        #       Becasue there will be no code and no locating by "Anchor"
+        #
+        
+        # Find all index with wire_name
+        idx_list = self.gen_wiring.index[self.gen_wiring['wire_name'] != ""].tolist()
+        #print(idx_list)
+        #idx_list = self.gen_wiring.index[(self.gen_wiring['see_point'] != "NONE") & (self.gen_wiring['see_point'] != "")].tolist()
+        #print(idx_list)
+        # Get the new dataframe
+        df = self.gen_wiring.iloc[idx_list].reset_index(drop=False)
+        # Check duplication
+        for i in range(len(df)):
+            if df['cnct_name'][i] in df['cnct_name'][1 + i:].tolist():
+                sys.exit(f"In \"cnct_name\" port name {df['cnct_name'][i]} is duplicated.")
+
+
 
     def _cnct_blks_main(self):
-        for idx in range(len(self.top_archi))[:1]:
+        for idx in range(len(self.top_archi))[:]:
             content = []
             dict_blk = self.top_archi[-idx-1] # the gen should backward
             gen_module_name = list(dict_blk.keys())[0] # the module name
@@ -266,21 +286,33 @@ class ic_cnct:
                 for line in content:
                     f.write(f"{line}\n")
 
+    def _cnct_blks_wiring_get_width(self, path2module, port_name):
+        pass
+
     def _cnct_blks_wiring(self, wiring_module, wiring_instances, wiring_content):
-        print(f"\nStart Wiring the {wiring_module}")
-        print(self.gen_wiring)
+        print(f"\nStart wiring the {wiring_instances} in {wiring_module}")
+        #print(self.gen_wiring)
         idx_list=[]
         for instance in wiring_instances:
             idx_list = idx_list + self.gen_wiring.index[self.gen_wiring['module_name'] == instance].tolist()
-        idx_list = idx_list + self.gen_wiring.index[self.gen_wiring['see_point'] == wiring_module].tolist()
 
-        print(idx_list)
-        #module_name = wiring['module_name']
-        #port_name   = wiring['port_name']
-        #cnct_name   = wiring['cnct_name']
-        #cnct_type   = wiring['cnct_type']
-        #see_point   = wiring['see_point']
-        #wire_name   = wiring['wire_name']
+        idx_this_level = idx_list
+        idx_low_level = self.gen_wiring.index[self.gen_wiring['see_point'] == wiring_module].tolist()
+        #print(idx_this_level, idx_low_level)
+
+        wiring_this_level = self.gen_wiring.iloc[idx_this_level].reset_index(drop=True)
+        wiring_low_level  = self.gen_wiring.iloc[idx_low_level].reset_index(drop=True)
+        #print(wiring_this_level)
+        #print(wiring_low_level)
+
+        for i in range(len(wiring_this_level)):
+            module_name = wiring_this_level['module_name'][i]
+            port_name   = wiring_this_level['port_name'][i]
+            cnct_name   = wiring_this_level['cnct_name'][i]
+            cnct_type   = wiring_this_level['cnct_type'][i]
+            see_point   = wiring_this_level['see_point'][i]
+            wire_name   = wiring_this_level['wire_name'][i]
+
         #for item in module_name:
         #    pass
 
