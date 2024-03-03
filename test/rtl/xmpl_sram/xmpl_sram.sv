@@ -5,12 +5,13 @@ module xmpl_sram #(
     input                           reset_n_i,
 
     // wd1
-    input                           xmpl_sram_a_i,
-    input  [12 - 1 : 0]             xmpl_sram_b_i, //asdwad
+    input                           en_sram_i,
+    input  [12 - 1 : 0]             sram_addr_i, //asdwad
 
+    input                           sram_rw_i
     // 1df1234
-    input  [32 - 1 : 0]             xmpl_sram_c_0,
-    input  [32 - 1 : 0]             xmpl_sram_status_o
+    input  [32 - 1 : 0]             sram_data_i,
+    output [32 - 1 : 0]             sram_data_o
 
 );
 

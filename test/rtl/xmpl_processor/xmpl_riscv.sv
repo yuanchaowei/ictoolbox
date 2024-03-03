@@ -1,16 +1,29 @@
 module xmpl_riscv #(
 )(
     // 123
-    input                           clk_i,
-    input                           reset_n_i,
+    input                   clk_i,
+    input                   reset_n_i,
 
     // wd1
-    input                           xmpl_riscv_a_i,
-    input  [12 - 1 : 0]             xmpl_riscv_b_i, //asdwad
+    output [12 - 1 : 0]     riscv_dsp_cic_a12_o,
+    output [15 - 1 : 0]     riscv_dsp_cic_b15_o,
+    input  [32 - 1 : 0]     riscv_dsp_cic_c32_i,
+
+    output [2 - 1 : 0]      riscv_dsp_fft_a2_o,
+    output [4 - 1 : 0]      riscv_dsp_fft_b4_o,
+    input  [16 - 1 : 0]     riscv_dsp_fft_c16_i,
+
+    output [7 - 1 : 0]      riscv_dsp_flt_a7_o,
+    output [8 - 1 : 0]      riscv_dsp_flt_b8_o,
+    input  [23 - 1 : 0]     riscv_dsp_flt_c23_i,
+
+
+    input                   riscv_en_dsp_fsm_o,
+    input  [14 - 1 : 0]     riscv_dsp_fsm_state_i,
 
     // 1df1234
-    input  [32 - 1 : 0]             xmpl_riscv_c_0,
-    input  [32 - 1 : 0]             xmpl_riscv_status_o
+    output [32 - 1 : 0]     riscv_2loongson_o,
+    output [32 - 1 : 0]     riscv_2stone_o
 
 );
 
