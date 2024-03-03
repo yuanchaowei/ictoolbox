@@ -5,12 +5,13 @@ module xmpl_flt #(
     input                           reset_n_i,
 
     // wd1
-    input                           xmpl_flt_a_i,
-    input  [12 - 1 : 0]             xmpl_flt_b_i, //asdwad
+    input                           en_flt_i,
+    input  [7 - 1 : 0]              flt_a7_i, //asdwad
+    input  [8 - 1 : 0]              flt_b8_i, //asdwad
 
     // 1df1234
-    input  [32 - 1 : 0]             xmpl_flt_c_o,
-    input  [32 - 1 : 0]             xmpl_flt_status_o
+    output [23 - 1 : 0]             flt_c23_o,
+    output                          flt_status_o
 
 );
 
@@ -18,3 +19,4 @@ logic [32 - 1 : 0] sadwd;
 logic              sxawd;
 logic              123;
 //awudhiuwha
+//

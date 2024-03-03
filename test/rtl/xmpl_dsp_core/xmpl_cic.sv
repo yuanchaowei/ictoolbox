@@ -5,12 +5,13 @@ module xmpl_cic #(
     input                           reset_n_i,
 
     // wd1
-    input                           xmpl_cic_a_i,
-    input  [12 - 1 : 0]             xmpl_cic_b_i, //asdwad
+    input                           en_cic_i,
+    input  [12 - 1 : 0]             cic_a12_i, //asdwad
+    input  [15 - 1 : 0]             cic_b15_i, //asdwad
 
     // 1df1234
-    input  [32 - 1 : 0]             xmpl_cic_c_o,
-    input  [32 - 1 : 0]             xmpl_cic_status_o
+    output [32 - 1 : 0]             cic_c32_o,
+    output                          cic_status_o
 
 );
 

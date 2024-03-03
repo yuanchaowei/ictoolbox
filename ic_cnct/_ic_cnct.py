@@ -46,7 +46,8 @@ class ic_cnct:
                 if i == len(lst) - 1 : str5 = ")"
                 content.append("%s%-*s %s%-*s%s" %(str1, num2, str2, str3, num4, str4, str5))
         except:
-            print("Input list in gen_para_port function is empty, propably no parameter")
+            #print("The \"list\" inputted to function gen_para_port is empty, propably no parameter")
+            pass
         return content 
 
     # Extract the parameters and ports
@@ -213,13 +214,12 @@ class ic_cnct:
         #print(self.gen_wiring)
 
     def _cnct_blks_main(self):
-        for idx in range(len(self.top_archi))[:]:
+        for idx in range(len(self.top_archi))[:1]:
             content = []
             dict_blk = self.top_archi[-idx-1] # the gen should backward
             gen_module_name = list(dict_blk.keys())[0] # the module name
             gen_sub_lvl_modules = list(dict_blk.values())[0] # sub modules (instances) should in module
-            print(f"\nStart gen block: {gen_module_name}")
-            print(f"Needed sub level modules: {gen_sub_lvl_modules}")
+            print(f"\nStart gen block: {gen_module_name}. Needed sub level modules: {gen_sub_lvl_modules}")
 
             # create top module name and anchors
             content.append(self.gen_anchor["anchor_gen_incl_imp"])
@@ -255,19 +255,38 @@ class ic_cnct:
                 content = content + self.cnct_blk(path2module, instance_name, default_connect=False, doprint=False)
                 content.append(f"\n")
 
-            # wiring - most important part
-            self._cnct_blks_wiring()
-
             # endmodule
             content.append(f"endmodule")
+
+            # wiring - most important part
+            content = self._cnct_blks_wiring(gen_module_name, gen_sub_lvl_modules, content)
 
             # write the file
             with open(f"{self.gen_outpath}/{gen_module_name}.sv", "w") as f:
                 for line in content:
                     f.write(f"{line}\n")
 
-    def _cnct_blks_wiring(self):
-        pass
+    def _cnct_blks_wiring(self, wiring_module, wiring_instances, wiring_content):
+        print(f"\nStart Wiring the {wiring_module}")
+        print(self.gen_wiring)
+        idx_list=[]
+        for instance in wiring_instances:
+            idx_list = idx_list + self.gen_wiring.index[self.gen_wiring['module_name'] == instance].tolist()
+        idx_list = idx_list + self.gen_wiring.index[self.gen_wiring['see_point'] == wiring_module].tolist()
+
+        print(idx_list)
+        #module_name = wiring['module_name']
+        #port_name   = wiring['port_name']
+        #cnct_name   = wiring['cnct_name']
+        #cnct_type   = wiring['cnct_type']
+        #see_point   = wiring['see_point']
+        #wire_name   = wiring['wire_name']
+        #for item in module_name:
+        #    pass
+
+
+        return wiring_content
+
 
 
 
@@ -278,10 +297,6 @@ class ic_cnct:
         # Extract the project architecture, important setp for auto-connection
         self._extract_archi()
         self._extract_wiring()
-        # Connect blocks, step 1
+        # Connect blocks
         self._cnct_blks_main()
-        #if output2path:
-        #    with open(output2path, "w") as f:
-        #        for line in self.gen_content:
-        #            f.write(f"{line}\n")
 
