@@ -276,6 +276,13 @@ class ic_cnct:
         #print(direction, width)
         return direction, width
 
+    def __find_anchor_insert(self, anchor, content, insertion):
+        for i in range(len(content)):
+            if anchor in content[i]:
+                content.insert(i, insertion)
+                break
+        return content
+
     def _cnct_blks_wiring(self, gen_module, gen_instance, content):
         print(f"\nStart wiring the {gen_instance} in {gen_module}")
         #print(self.df_gen_wiring)
@@ -317,18 +324,12 @@ class ic_cnct:
             # If port, add to module interface, If wire, declaration. If para, do nothing. 
             if cnct_type == "port":
                 direction, width = self._fetch_portinfo(inst_name, port_name)
-                for i in range(len(content)):
-                    if self.json_anchor['anchor_gen_port'] in content[i]:
-                        insert_content = f"{direction} {width} {cnct_name},"
-                        content.insert(i, insert_content)
-                        break
+                insert_content = f"{direction} {width} {cnct_name},"
+                content = self.__find_anchor_insert(self.json_anchor['anchor_gen_port'], content, insert_content)
             elif cnct_type == "wire":
                 direction, width = self._fetch_portinfo(inst_name, port_name)
-                for i in range(len(content)):
-                    if self.json_anchor['anchor_gen_wire_end'] in content[i]:
-                        insert_content = f"logic {width} {cnct_name};"
-                        content.insert(i, insert_content)
-                        break
+                insert_content = f"logic {width} {cnct_name};"
+                content = self.__find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
             elif cnct_type == "para":
                 pass
 
@@ -351,11 +352,8 @@ class ic_cnct:
                     break
 
             direction, width = self._fetch_portinfo(inst_name, port_name)
-            for i in range(len(content)):
-                if self.json_anchor['anchor_gen_wire_end'] in content[i]:
-                    insert_content = f"logic {width} {wire_name};"
-                    content.insert(i, insert_content)
-                    break
+            insert_content = f"logic {width} {wire_name};"
+            content = self.__find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
 
         return content
 
@@ -385,11 +383,8 @@ class ic_cnct:
                             port_name = df['port_name'].tolist()[0]
                             #print(inst_name, port_name)
                             direction, width = self._fetch_portinfo(inst_name, port_name)
-                            for k in range(len(content)):
-                                if self.json_anchor['anchor_gen_port'] in content[k]:
-                                    insert_content = f"{direction} {width} {cnct_name},"
-                                    content.insert(k, insert_content)
-                                    break
+                            insert_content = f"{direction} {width} {cnct_name},"
+                            content = self.__find_anchor_insert(self.json_anchor['anchor_gen_port'], content, insert_content)
                         elif ");" in content[i]:
                             break
         return content
@@ -428,18 +423,15 @@ class ic_cnct:
         print(df)
         df = df.drop_duplicates().reset_index(drop=True)
         print(df)
-        #for i in list(reversed(del_list)):  # del old ports
-        #    content.pop(i)
+        for i in list(reversed(del_list)):  # del old ports
+            content.pop(i)
 
-        #for i in range(len(df)):
-        #    for k in range(len(content)):
-        #        if self.json_anchor['anchor_gen_port'] in content[k]:
-        #            if i == len(df) - 1:
-        #                insert_content = f"{df['direction'][i]} {df['width'][i]} {df['port'][i]}"
-        #            else:
-        #                insert_content = f"{df['direction'][i]} {df['width'][i]} {df['port'][i]},"
-        #            content.insert(k, insert_content)
-        #            break
+        for i in range(len(df)):
+            if i == len(df) - 1:
+                insert_content = f"{df['direction'][i]} {df['width'][i]} {df['port'][i]}"
+            else:
+                insert_content = f"{df['direction'][i]} {df['width'][i]} {df['port'][i]},"
+            content = self.__find_anchor_insert(self.json_anchor['anchor_gen_port'], content, insert_content)
 
         return content
 
