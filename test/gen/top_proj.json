@@ -41,7 +41,7 @@
         "anchor_gen_localpara"      : "// Anchor gen_localpara",
         "anchor_gen_struct"         : "// Anchor gen_struct",
         "anchor_gen_wire_begin"     : "// Anchor gen_wire_begin",
-        "anchor_gen_wire_end"     : "// Anchor gen_wire_end"
+        "anchor_gen_wire_end"       : "// Anchor gen_wire_end"
 
     },
     "gen_incl_imp":

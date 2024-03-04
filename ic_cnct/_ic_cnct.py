@@ -276,10 +276,10 @@ class ic_cnct:
         #print(direction, width)
         return direction, width
 
-    def __find_anchor_insert(self, anchor, content, insertion):
+    def __find_anchor_insert(self, anchor, content, insert_content):
         for i in range(len(content)):
             if anchor in content[i]:
-                content.insert(i, insertion)
+                content.insert(i, insert_content)
                 break
         return content
 
@@ -420,23 +420,28 @@ class ic_cnct:
             elif self.json_anchor['anchor_gen_wire_end'] in content[i]:
                 break
         df = pd.DataFrame.from_dict(dict_port)
-        print(df)
         df = df.drop_duplicates().reset_index(drop=True)
-        print(df)
         for i in list(reversed(del_list)):  # del old ports
             content.pop(i)
 
-        for i in range(len(df)):
-            if i == len(df) - 1:
-                insert_content = f"{df['direction'][i]} {df['width'][i]} {df['port'][i]}"
+        df_logic = df[df['direction'] == "logic"].reset_index(drop=True)
+        df_io    = df[df['direction'] != "logic"].reset_index(drop=True)
+        #print(df_logic)
+        #print(df_io)
+        for i in range(len(df_io)):
+            if i == len(df_io) - 1:
+                insert_content = f"{df_io['direction'][i]} {df_io['width'][i]} {df_io['port'][i]}"
             else:
-                insert_content = f"{df['direction'][i]} {df['width'][i]} {df['port'][i]},"
+                insert_content = f"{df_io['direction'][i]} {df_io['width'][i]} {df_io['port'][i]},"
             content = self.__find_anchor_insert(self.json_anchor['anchor_gen_port'], content, insert_content)
+        for i in range(len(df_logic)):
+            insert_content = f"{df_logic['direction'][i]} {df_logic['width'][i]} {df_logic['port'][i]};"
+            content = self.__find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
 
         return content
 
     def _cnct_blks_post_beauty(self, content):
-                #line = re.sub(r"//.*", "", line) # delete all contents with beginning //
+        #line = re.sub(r"//.*", "", line) # delete all contents with beginning //
         return content
 
     def _cnct_blks_main(self):
@@ -450,9 +455,8 @@ class ic_cnct:
 
             # create top module name and anchors
             content.append(self.json_anchor["anchor_gen_incl_imp"])
-            content.append(f"module {gen_module} #(")
-            content.append(self.json_anchor["anchor_gen_parameter"])
-            content.append(f")(")
+            content.append(f"module {gen_module}")
+            content.append(f"(")
             content.append(self.json_anchor["anchor_gen_port"])
             content.append(f");\n")
 
