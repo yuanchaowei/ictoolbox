@@ -1,4 +1,6 @@
 module xmpl_dsp_fsm #(
+    parameter NIHAO = 14,
+    parameter HHH   = 2
 )(
     // 123
     input               clk_i,
@@ -14,7 +16,7 @@ module xmpl_dsp_fsm #(
     output              en_xmpl_dsp_fft_o,
     output              en_xmpl_dsp_flt_o,
 
-    output [14 - 1 : 0] xmpl_dsp_fsm_state_o
+    output [NIHAO - 1 : 0] xmpl_dsp_fsm_state_o
 
 );
 

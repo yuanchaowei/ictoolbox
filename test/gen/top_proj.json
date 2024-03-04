@@ -40,9 +40,9 @@
         "anchor_gen_port"           : "// Anchor gen_port",
         "anchor_gen_localpara"      : "// Anchor gen_localpara",
         "anchor_gen_struct"         : "// Anchor gen_struct",
-        "anchor_gen_wiring_begin"   : "// Anchor gen_wiring begin",
-        "anchor_gen_wiring_end"     : "// Anchor gen_wiring end",
-        "anchor_gen_instances"      : "// Anchor gen_instances"
+        "anchor_gen_wire_begin"     : "// Anchor gen_wire_begin",
+        "anchor_gen_wire_end"     : "// Anchor gen_wire_end"
+
     },
     "gen_incl_imp":
     {
@@ -69,7 +69,7 @@
     },
     "gen_wiring":
     [
-        ["module_name",     "port_name",    "cnct_name",                "cnct_type", "see_point",     "wire_name"],
+        ["inst_name",       "port_name",    "cnct_name",                "cnct_type", "see_point",     "wire_name"],
 
         ["i_xmpl_cic",      "clk_i",        "clk_xmpl_i",               "port",      "NONE",          ""],
         ["i_xmpl_cic",      "reset_n_i",    "reset_xmpl_n_i",           "port",      "NONE",          ""],
@@ -82,19 +82,21 @@
         ["i_xmpl_fft",      "clk_i",        "clk_xmpl_i",               "port",      "NONE",          ""],
         ["i_xmpl_fft",      "reset_n_i",    "reset_xmpl_n_i",           "port",      "NONE",          ""],
         ["i_xmpl_fft",      "en_fft_i",     "en_xmpl_dsp_fft_i",        "port",      "xmpl_dsp",      "en_xmpl_dsp_fft_s"],
-        ["i_xmpl_fft",      "fft_a2_i",     "xmpl_dsp_fft_a2_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_fft_a2_s "],
-        ["i_xmpl_fft",      "fft_b4_i",     "xmpl_dsp_fft_b4_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_fft_b4_s "],
+        ["i_xmpl_fft",      "fft_a2_i",     "xmpl_dsp_fft_a2_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_fft_a2_s"],
+        ["i_xmpl_fft",      "fft_b4_i",     "xmpl_dsp_fft_b4_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_fft_b4_s"],
         ["i_xmpl_fft",      "fft_c16_o",    "xmpl_dsp_fft_c16_o",       "port",      "top_xmpl",      "xmpl_riscv_dsp_fft_c16_s"],
         ["i_xmpl_fft",      "fft_status_o", "xmpl_dsp_fft_status_o",    "port",      "xmpl_dsp",      "xmpl_dsp_fft_status_s"],
 
         ["i_xmpl_flt",      "clk_i",        "clk_xmpl_i",               "port",      "NONE",          ""],
         ["i_xmpl_flt",      "reset_n_i",    "reset_xmpl_n_i",           "port",      "NONE",          ""],
         ["i_xmpl_flt",      "en_flt_i",     "en_xmpl_dsp_flt_i",        "port",      "xmpl_dsp",      "en_xmpl_dsp_flt_s"],
-        ["i_xmpl_flt",      "flt_a7_i",     "xmpl_dsp_flt_a7_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_flt_a7_s "],
-        ["i_xmpl_flt",      "flt_b8_i",     "xmpl_dsp_flt_b8_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_flt_b8_s "],
+        ["i_xmpl_flt",      "flt_a7_i",     "xmpl_dsp_flt_a7_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_flt_a7_s"],
+        ["i_xmpl_flt",      "flt_b8_i",     "xmpl_dsp_flt_b8_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_flt_b8_s"],
         ["i_xmpl_flt",      "flt_c23_o",    "xmpl_dsp_flt_c23_o",       "port",      "top_xmpl",      "xmpl_riscv_dsp_flt_c23_s"],
         ["i_xmpl_flt",      "flt_status_o", "xmpl_dsp_flt_status_o",    "port",      "xmpl_dsp",      "xmpl_dsp_flt_status_s"],
 
+        ["i_xmpl_dsp_fsm",  "NIHAO",                    "14",                       "para", "NONE",          ""],
+        ["i_xmpl_dsp_fsm",  "HHH",                      "9",                        "para", "NONE",          ""],
         ["i_xmpl_dsp_fsm",  "clk_i",                    "clk_xmpl_i",               "port", "NONE",          ""],
         ["i_xmpl_dsp_fsm",  "reset_n_i",                "reset_xmpl_n_i",           "port", "NONE",          ""],
         ["i_xmpl_dsp_fsm",  "en_xmpl_dsp_fsm_i",        "en_xmpl_dsp_fsm_i",        "port", "top_xmpl",      "en_dsp_fsm_s"],

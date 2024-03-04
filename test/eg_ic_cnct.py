@@ -16,7 +16,7 @@ if False:
                 'ls_en_w_i', 'ls_en_r_i', 'ls_mode_i', 'mux_sel_wbdata_i', 'wb_en_i', 'mem_wdata_i', 'alu_out_c_o', 'pc_en_load_branch_o', 
                 'rd_o', 'ls_en_w_o', 'ls_en_r_o', 'ls_mode_o', 'ls_addr_o', 'ls_wdata_o', 'mux_sel_wbdata_o', 'wb_en_o']
     
-    for i in ic_cnct_i.gen_para_port(port_lst, True):
+    for i in ic_cnct_i._gen_para_port(port_lst, True):
         print(i)
      
     testpath = f"{BASEPATH}/ictoolbox/test/rtl/filelist.txt"
