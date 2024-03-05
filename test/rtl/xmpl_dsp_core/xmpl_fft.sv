@@ -6,8 +6,8 @@ module xmpl_fft #(
 
     // wd1
     input                           en_fft_i,
-    input  [2 - 1 : 0]              fft_a2_i, //asdwad
-    input  [4 - 1 : 0]              fft_b4_i, //asdwad
+    input  [2 - 1 : 0]fft_a2_i, //test special cases
+    input  [4 - 1 : 0]fft_b4_i, //asdwad
 
     // 1df1234
     output [16 - 1 : 0]             fft_c16_o,

@@ -41,31 +41,11 @@
         "anchor_gen_localpara"      : "// Anchor gen_localpara",
         "anchor_gen_struct"         : "// Anchor gen_struct",
         "anchor_gen_wire_begin"     : "// Anchor gen_wire_begin",
-        "anchor_gen_wire_end"       : "// Anchor gen_wire_end"
-
-    },
-    "gen_incl_imp":
-    {
-        "include": ["asuihd.sv"],
-        "import": ["pkg_riscv_common"],
-        "comments": ["Should add the see_point, So: Not suggestted to use this"]
-    },
-    "gen_parameter":
-    {
-        "parameter":  ["TEST_PARAMETER1", "TEST_PARAMETER2"]
-    },
-    "gen_localpara":
-    {
-        "localparam": ["TEST_LOCALPARA1", "TEST_LOCALPARA2"]
-    },
-    "gen_struct":
-    {
-        "struct":
-        {
-            "struct_stall"  : "stall",
-            "struct_kill"   : "kill",
-            "struct_bubble" : "bubble"
-        }
+        "anchor_gen_wire_end"       : "// Anchor gen_wire_end",
+        "anchor_gen_assign"         : "// Anchor gen_assign",
+        "anchor_gen_inst_begin"     : "// Anchor gen_inst_begin",
+        "anchor_gen_inst_end"       : "// Anchor gen_inst_end",
+        "anchor_gen_code"           : "// Anchor gen_code"
     },
     "gen_wiring":
     [
@@ -150,12 +130,31 @@
         ["i_xmpl_loongson", "xmpl_stone2loongson_i",    "xmpl_stone2loongson_s",    "wire",      "", ""],
         ["i_xmpl_loongson", "xmpl_loongson2stone_o",    "xmpl_loongson2stone_s",    "wire",      "", ""]
     ],
-    "gen_code":
-    [ 
-        {
-            "file"    : "wdh1897h",
-            "anchor"  : "asdawd",
-            "content" : "import asiuxhiuwhadi:: *"
-        }
+    "gen_customized_code":
+    [
+        ["see_point",       "gen_anchor",               "insert_content"],
+        ["top_xmpl",        "anchor_gen_incl_imp",      "// Hello From anchor_gen_incl_imp"],
+        ["top_xmpl",        "anchor_gen_parameter",     "// Hello From anchor_gen_parameter"],
+        ["top_xmpl",        "anchor_gen_port",          "// Hello From anchor_gen_port"],
+        ["top_xmpl",        "anchor_gen_localpara",     "// Hello From anchor_gen_localpara"],
+        ["top_xmpl",        "anchor_gen_struct",        "// Hello From anchor_gen_struct"],
+        ["top_xmpl",        "anchor_gen_wire_begin",    "// Hello From anchor_gen_wire_begin"],
+        ["top_xmpl",        "anchor_gen_wire_end",      "// Hello From anchor_gen_wire_end"],
+        ["top_xmpl",        "anchor_gen_assign",        "// Hello From anchor_gen_assign"],
+        ["top_xmpl",        "anchor_gen_inst_begin",    "// Hello From anchor_gen_inst_begin"],
+        ["top_xmpl",        "anchor_gen_inst_end",      "// Hello From anchor_gen_inst_end"],
+        ["top_xmpl",        "anchor_gen_code",          "// Hello From anchor_gen_code"]
+
     ]
 }
+
+
+
+
+
+
+
+
+
+
+
