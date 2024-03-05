@@ -115,7 +115,7 @@ class ic_cnct:
                     break
 
         if module_name == None:
-            sys.exit(f"No module name from reading file")
+            sys.exit(f"No module name from reading file in {path2module}")
         df_para = pd.DataFrame.from_dict(dict_para)
         df_port = pd.DataFrame.from_dict(dict_port)
         return module_name, df_para, df_port
@@ -157,11 +157,10 @@ class ic_cnct:
     #
     #
 
-    def _cnct_blks_readjson(self, jsonfile, output2path):
+    def _cnct_blks_readjson(self, jsonfile):
         f = open(jsonfile)
         self.json_data = json.load(f)
         f.close()
-        self.gen_outpath = output2path
         self.json_info                  = self.json_data['gen_info']
         self.json_info_filelist_path    = self.json_data['gen_info']['filelist_path']
         if self.json_info_filelist_path == "":
@@ -169,12 +168,17 @@ class ic_cnct:
         else:
             with open(self.json_info_filelist_path) as file:
                 for line in file:
-                    if "incdir" in line:
+                    if "incdir" in line: # for including the dir
+                        pass
+                    elif line == "\n": # if is a empty line
+                        pass
+                    elif ".svh" in line: # head file
                         pass
                     else:
                         filepath = line.replace("\n", "")
                         filename = os.path.basename(filepath).replace(".sv", "")
                         self.json_info_filelist = {**self.json_info_filelist, **{filename: filepath}}
+        #print(self.json_info_filelist)
         self.json_archi                 = self.json_data['gen_archi']
         self.json_anchor                = self.json_data['gen_anchor']
         self.json_wiring                = self.json_data['gen_wiring']
@@ -236,15 +240,23 @@ class ic_cnct:
             if dict_archi == {}:
                 break
 
-        self.df_gen_instance = pd.DataFrame(np.array(self.gen_instance), columns=['instance_name', 'module_name'])
-        print("\nConnections in each level:")
-        for i in range(len(self.gen_archi)):
-            print(f"Level Connections No.{i+1}: {self.gen_archi[i]}")
-        print("\nBasic instances and its root module:")
-        print(self.df_gen_instance)
+        try: # Maybe no instances
+            self.df_gen_instance = pd.DataFrame(np.array(self.gen_instance), columns=['instance_name', 'module_name'])
+            print("\nConnections in each level:")
+            for i in range(len(self.gen_archi)):
+                print(f"Level Connections No.{i+1}: {self.gen_archi[i]}")
+            print("\nBasic instances and its root module:")
+            print(self.df_gen_instance)
+        except:
+            warnings.warn(f"\nNeed instances and modules in json file\n")
+            pass
 
     def _extract_wiring(self):
         self.df_gen_wiring = pd.DataFrame(self.json_wiring[1:], columns=self.json_wiring[0])
+        keys = self.df_gen_wiring.keys()
+        for key in keys:
+            self.df_gen_wiring[key] = self.df_gen_wiring[key].str.replace(" ", "")
+
         #
         # The "port_name" is "not necessary" to avoid the duplication in different instances.
         #       Because the code will avoid wrong location. The connection will find "Anchor".
@@ -282,7 +294,11 @@ class ic_cnct:
         # extract all para in cnct_type
         idx_list = self.df_gen_wiring.index[self.df_gen_wiring['cnct_type'] == "para"].tolist()
         self.df_paravalue = self.df_gen_wiring.iloc[idx_list].reset_index(drop=False)
-        print(self.df_paravalue)
+        if self.df_paravalue.empty:
+            print(f"\n_extract_paravalue get: No parameters")
+        else:
+            print("\n_extract_paravalue get: Detected parameters are:")
+            print(self.df_paravalue)
 
     def _extract_custmozized_code(self):
         self.df_customized_code = pd.DataFrame(self.json_customized_code[1:], columns=self.json_customized_code[0])
@@ -423,6 +439,13 @@ class ic_cnct:
                 content = self.__find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
             elif cnct_type == "para":
                 pass
+            elif cnct_type == "donttouch": # Leave customized connection like 1'b1 and xxxx[x:x] connection.
+                pass
+            elif cnct_type == "": # default
+                pass
+            elif cnct_type == "struct": # Pelase use "gen_customized_code" to declare the struct
+                pass
+
 
         for i in range(len(wiring_low_level)):
             inst_name = wiring_low_level['inst_name'][i]
@@ -495,7 +518,6 @@ class ic_cnct:
             line = content[i]
             if "input" in line or "output" in line or "logic" in line:
                 del_list.append(i)
-    
                 line_split = line.split() # split with spaces
                 dict_port['direction'].append(line_split[0]) # input and ooutput is always located in first place
                 width = re.search(r"(\[.*\])", line) # find the [WIDTH:0] content and extract it
@@ -512,7 +534,6 @@ class ic_cnct:
                 line = line.replace(",", "")
                 line = line.replace(";", "")
                 line_split = line.split()
-                #print(line_split)
                 for port in line_split:
                     dict_port['port'].append(port)
             elif self.json_anchor['anchor_gen_wire_end'] in content[i]:
@@ -563,42 +584,51 @@ class ic_cnct:
                 break
             elif "input" in line or "output" in line:
                 idx_list.append(i)
-                line_split = line.replace(",", "").split() # split with spaces
-                dict_port['direction'].append(line_split[0]) # input and ooutput is always located in first place
-                dict_port['port'].append(line_split[-1])
-                if len(line_split) == 2:
+                # Find the first [WIDTH:0] content and extract it
+                # The ? is to avoid comment content has [xxx:xxx]
+                # This can later support a comment feature
+                width = re.search(r"(\[.*?\])", line)
+                if width == None:
                     dict_port['width'].append("")
                 else:
-                    dict_port['width'].append(line_split[1])
+                    width = width.group()
+                    line = line.replace(width, "")  # delete the width for port name extraction
+                    width = width.replace(" ", "")
+                    dict_port['width'].append(width)
+
+                line_split = line.replace(",", "").split() # split with spaces
+                dict_port['direction'].append(line_split[0]) # input and ooutput is always located in first place
+                dict_port['port'].append(line_split[1])
         df = pd.DataFrame.from_dict(dict_port)
-        #print(df)
-        # Sorting
-        df_input = df[df['direction'] == "input"].reset_index(drop=True)
-        df_input_clk    = df_input[df_input['port'].str.contains("clk_")]#.sort_values('port').reset_index(drop=True)
-        df_input_reset  = df_input[df_input['port'].str.contains("reset_")]#.sort_values('port').reset_index(drop=True)
-        df_input_en     = df_input[df_input['port'].str.contains("en_")]#.sort_values('port').reset_index(drop=True)
-        df_input_else   = df_input[~df_input['port'].str.contains(r"clk_|reset_|en_")]#.sort_values('port').reset_index(drop=True)
-        df_input = pd.concat([df_input_clk, df_input_reset, df_input_en, df_input_else], ignore_index=True, sort=False)
-        df_output = df[df['direction'] == "output"].reset_index(drop=True)
-        df_output = df_output.sort_values('port').reset_index(drop=True)
-        df = pd.concat([df_input, df_output], ignore_index=True, sort=False)
-        df['width'] = df['width'].str.replace(":", " : ")
-        df['width'] = df['width'].str.replace("-", " - ")
-        #print(df)
-        max_width = len(max(df['width'].tolist(), key=len))
-        str1 = self.indent  # indent
-        num2 = max(len("input"), len("output"))            # max length port width
-        str2 = ""           # port name
-        str3 = "("          # left bracket
-        num3 = max_width    # max length port width
-        str4 = ""           # default port or no
-        str5 = ","          # right bracket
-        for i in range(len(idx_list)):
-            str2 = df['direction'][i]
-            str3 = df['width'][i]
-            str4 = df['port'][i]
-            if i == len(idx_list) - 1 : str5 = ""
-            content[idx_list[i]] = "%s%-*s %-*s %s%s" %(str1, num2, str2, num3, str3, str4, str5)
+        if df.empty:
+            warnings.warn(f"Skip beauty work for the in-output due to no in-output in json declared")
+        else:
+            df_input = df[df['direction'] == "input"].reset_index(drop=True)
+            df_input_clk    = df_input[df_input['port'].str.contains("clk_")]#.sort_values('port').reset_index(drop=True)
+            df_input_reset  = df_input[df_input['port'].str.contains("reset_")]#.sort_values('port').reset_index(drop=True)
+            df_input_en     = df_input[df_input['port'].str.contains("en_")]#.sort_values('port').reset_index(drop=True)
+            df_input_else   = df_input[~df_input['port'].str.contains(r"clk_|reset_|en_")]#.sort_values('port').reset_index(drop=True)
+            df_input = pd.concat([df_input_clk, df_input_reset, df_input_en, df_input_else], ignore_index=True, sort=False)
+            df_output = df[df['direction'] == "output"].reset_index(drop=True)
+            df_output = df_output.sort_values('port').reset_index(drop=True)
+            df = pd.concat([df_input, df_output], ignore_index=True, sort=False)
+            df['width'] = df['width'].str.replace(":", " : ")
+            df['width'] = df['width'].str.replace("-", " - ")
+            #print(df)
+            max_width = len(max(df['width'].tolist(), key=len))
+            str1 = self.indent  # indent
+            num2 = max(len("input"), len("output"))            # max length port width
+            str2 = ""           # port name
+            str3 = "("          # left bracket
+            num3 = max_width    # max length port width
+            str4 = ""           # default port or no
+            str5 = ","          # right bracket
+            for i in range(len(idx_list)):
+                str2 = df['direction'][i]
+                str3 = df['width'][i]
+                str4 = df['port'][i]
+                if i == len(idx_list) - 1 : str5 = ""
+                content[idx_list[i]] = "%s%-*s %-*s %s%s" %(str1, num2, str2, num3, str3, str4, str5)
  
         # ##############################
         # Beauty work for wire
@@ -631,15 +661,15 @@ class ic_cnct:
             str3 = "("          # left bracket
             num3 = max_width    # max length port width
             str4 = ""           # default port or no
-            str5 = ","          # right bracket
+            str5 = ""           # 
             for i in range(len(idx_list)):
                 str2 = df['direction'][i]
                 str3 = df['width'][i]
                 str4 = df['port'][i]
-                if i == len(idx_list) - 1 : str5 = ""
+                #if i == len(idx_list) - 1 : str5 = "" # This is wire and aready with ;
                 content[idx_list[i]] = "%s%-*s %-*s %s%s" %(str1, num2, str2, num3, str3, str4, str5)
         except:
-            pass
+            warnings.warn(f"Skip beauty work for logic due to no wiring in this level")
 
         # ##############################
         # Beauty work for connect
@@ -658,13 +688,17 @@ class ic_cnct:
             if found_anchor:
                 if "." in line and "(" in line and ")" in line:
                     idx_list.append(i)
-                    line = line.replace(".", "")
                     line = line.replace("(", "")
                     line = line.replace(")", "")
                     line = line.replace(",", "")
                     line_split = line.split()
-                    lst_port.append(line_split[0])
-                    lst_cnct.append(line_split[1])
+                    line_split[0] = line_split[0].replace(".", "") # Delete first "." because struct in (x) also has "."
+                    if len(line_split) != 2: # maybe no connection right now because no wiring in json file
+                        lst_port.append(line_split[0])
+                        lst_cnct.append("")
+                    else:
+                        lst_port.append(line_split[0])
+                        lst_cnct.append(line_split[1])
                 elif ");" in line:
                     connection = self._gen_para_port(lst_port, lst_cnct)
                     for i in range(len(idx_list)):
@@ -672,6 +706,7 @@ class ic_cnct:
                     idx_list = []
                     lst_port = []
                     lst_cnct = []
+
         # ##############################
         # Beauty work for removing comments
         # ##############################
@@ -706,8 +741,9 @@ class ic_cnct:
                     f.write(f"{line}\n")
 
     def cnct_blks(self, jsonfile, output2path, remove_anchor=True):
+        self.gen_outpath = output2path
         # Read json file which has all connection setups
-        self._cnct_blks_readjson(jsonfile, output2path)
+        self._cnct_blks_readjson(jsonfile)
         # Extract the project architecture and prepare data for main process
         self._extract_archi()
         self._extract_wiring()

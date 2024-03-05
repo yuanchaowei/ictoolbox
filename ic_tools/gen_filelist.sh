@@ -1,4 +1,4 @@
 #!/bin/bash
 
-find . -type f -name "*.sv" | xargs realpath > filelist.txt
+find ./*/rtl -type f -name "*.sv" | xargs realpath > filelist.txt
 

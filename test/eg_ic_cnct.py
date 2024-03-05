@@ -3,8 +3,7 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from ic_cnct import ic_cnct
 
-BASEPATH="/home/chaov"
-
+BASEPATH=os.environ.get("HOME")
 ic_cnct_i = ic_cnct(indent_default=4)
 
 
