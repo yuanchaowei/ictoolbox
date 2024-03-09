@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from ic_cnct import ic_cnct
+from icunit import ic_cnct
 
 BASEPATH=os.environ.get("HOME")
 ic_cnct_i = ic_cnct(indent_default=4)
