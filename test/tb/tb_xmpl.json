@@ -1,0 +1,58 @@
+{
+    "gen_info": 
+    { 
+        "top_name": "tb_xmpl",
+        "filelist_path":"",
+        "filelist":
+        {
+            "xmpl_riscv"    : "/home/chaov/ictoolbox/test/rtl/xmpl_processor/xmpl_riscv.sv",
+            "xmpl_loongson" : "/home/chaov/ictoolbox/test/rtl/xmpl_processor/xmpl_loongson.sv",
+            "xmpl_stone"    : "/home/chaov/ictoolbox/test/rtl/xmpl_processor/xmpl_stone.sv"
+        }
+    },
+    "gen_archi": 
+    {
+        "tb_xmpl_processor": {
+            "i_xmpl_riscv": "xmpl_riscv",
+            "i_xmpl_loongson": "xmpl_loongson",
+            "i_xmpl_stone": "xmpl_stone"}
+    },
+    "gen_anchor":
+    { 
+        "anchor_gen_incl_imp"       : "// Anchor gen_incl_imp",
+        "anchor_gen_parameter"      : "// Anchor gen_parameter",
+        "anchor_gen_port"           : "// Anchor gen_port",
+        "anchor_gen_localpara"      : "// Anchor gen_localpara",
+        "anchor_gen_struct"         : "// Anchor gen_struct",
+        "anchor_gen_wire_begin"     : "// Anchor gen_wire_begin",
+        "anchor_gen_wire_end"       : "// Anchor gen_wire_end",
+        "anchor_gen_assign"         : "// Anchor gen_assign",
+        "anchor_gen_inst_begin"     : "// Anchor gen_inst_begin",
+        "anchor_gen_inst_end"       : "// Anchor gen_inst_end",
+        "anchor_gen_code"           : "// Anchor gen_code"
+    },
+    "gen_wiring":
+    [
+        ["inst_name",       "port_name",                "cnct_name",                    "cnct_type", "see_point",     "wire_name"],
+
+        ["i_xmpl_riscv",    "clk_i",                    "clk_xmpl_i",                   "port",      "", ""],
+        ["i_xmpl_riscv",    "reset_n_i",                "reset_xmpl_n_i",               "port",      "", ""],
+        ["i_xmpl_riscv",    "riscv_2loongson_o",        "xmpl_loongson_s",              "wire",      "", ""],
+        ["i_xmpl_riscv",    "riscv_2stone_o",           "xmpl_stone_s",                 "wire",      "", ""],
+
+        ["i_xmpl_stone",    "xmpl_stone_i",             "xmpl_stone_s",                 "wire",      "", ""],
+        ["i_xmpl_stone",    "xmpl_loongson2stone_i",    "xmpl_loongson2stone_s",        "wire",      "", ""],
+        ["i_xmpl_stone",    "xmpl_stone2loongson_o",    "xmpl_stone2loongson_s",        "wire",      "", ""],
+
+        ["i_xmpl_loongson", "xmpl_loongson_i",          "xmpl_loongson_s",              "wire",      "", ""],
+        ["i_xmpl_loongson", "xmpl_stone2loongson_i",    "xmpl_stone2loongson_s",        "wire",      "", ""],
+        ["i_xmpl_loongson", "xmpl_loongson2stone_o",    "xmpl_loongson2stone_s",        "wire",      "", ""]
+    ],
+    "gen_customized_code":
+    [
+        ["see_point",       "gen_anchor",               "insert_content"],
+        ["xmpl_top",        "anchor_gen_code",          "// Hello From anchor_gen_code"]
+
+    ]
+}
+

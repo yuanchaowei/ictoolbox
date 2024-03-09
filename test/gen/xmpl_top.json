@@ -1,7 +1,7 @@
 {
     "gen_info": 
     { 
-        "top_name": "top_xmpl",
+        "top_name": "xmpl_top",
         "filelist_path": "/home/chaov/ictoolbox/test/rtl/filelist.txt",
         "filelist":
         {
@@ -18,7 +18,7 @@
     },
     "gen_archi": 
     {
-        "top_xmpl": {
+        "xmpl_top": {
             "xmpl_dsp": {
                 "xmpl_dsp_core": {
                     "i_xmpl_fft": "xmpl_fft",
@@ -54,39 +54,39 @@
         ["i_xmpl_cic",      "clk_i",        "clk_xmpl_i",               "port",      "NONE",          ""],
         ["i_xmpl_cic",      "reset_n_i",    "reset_xmpl_n_i",           "port",      "NONE",          ""],
         ["i_xmpl_cic",      "en_cic_i",     "en_xmpl_dsp_cic_i",        "port",      "xmpl_dsp",      "en_xmpl_dsp_cic_s"],
-        ["i_xmpl_cic",      "cic_a12_i",    "xmpl_dsp_cic_a12_i",       "port",      "top_xmpl",      "xmpl_riscv_dsp_cic_a12_s"],
-        ["i_xmpl_cic",      "cic_b15_i",    "xmpl_dsp_cic_b15_i",       "port",      "top_xmpl",      "xmpl_riscv_dsp_cic_b15_s"],
-        ["i_xmpl_cic",      "cic_c32_o",    "xmpl_dsp_cic_c32_o",       "port",      "top_xmpl",      "xmpl_riscv_dsp_cic_c32_s"],
+        ["i_xmpl_cic",      "cic_a12_i",    "xmpl_dsp_cic_a12_i",       "port",      "xmpl_top",      "xmpl_riscv_dsp_cic_a12_s"],
+        ["i_xmpl_cic",      "cic_b15_i",    "xmpl_dsp_cic_b15_i",       "port",      "xmpl_top",      "xmpl_riscv_dsp_cic_b15_s"],
+        ["i_xmpl_cic",      "cic_c32_o",    "xmpl_dsp_cic_c32_o",       "port",      "xmpl_top",      "xmpl_riscv_dsp_cic_c32_s"],
         ["i_xmpl_cic",      "cic_status_o", "xmpl_dsp_cic_status_o",    "port",      "xmpl_dsp",      "xmpl_dsp_cic_status_s"],
 
         ["i_xmpl_fft",      "clk_i",        "clk_xmpl_i",               "port",      "NONE",          ""],
         ["i_xmpl_fft",      "reset_n_i",    "reset_xmpl_n_i",           "port",      "NONE",          ""],
         ["i_xmpl_fft",      "en_fft_i",     "en_xmpl_dsp_fft_i",        "port",      "xmpl_dsp",      "en_xmpl_dsp_fft_s"],
-        ["i_xmpl_fft",      "fft_a2_i",     "xmpl_dsp_fft_a2_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_fft_a2_s"],
-        ["i_xmpl_fft",      "fft_b4_i",     "xmpl_dsp_fft_b4_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_fft_b4_s"],
-        ["i_xmpl_fft",      "fft_c16_o",    "xmpl_dsp_fft_c16_o",       "port",      "top_xmpl",      "xmpl_riscv_dsp_fft_c16_s"],
+        ["i_xmpl_fft",      "fft_a2_i",     "xmpl_dsp_fft_a2_i",        "port",      "xmpl_top",      "xmpl_riscv_dsp_fft_a2_s"],
+        ["i_xmpl_fft",      "fft_b4_i",     "xmpl_dsp_fft_b4_i",        "port",      "xmpl_top",      "xmpl_riscv_dsp_fft_b4_s"],
+        ["i_xmpl_fft",      "fft_c16_o",    "xmpl_dsp_fft_c16_o",       "port",      "xmpl_top",      "xmpl_riscv_dsp_fft_c16_s"],
         ["i_xmpl_fft",      "fft_status_o", "xmpl_dsp_fft_status_o",    "port",      "xmpl_dsp",      "xmpl_dsp_fft_status_s"],
 
         ["i_xmpl_flt",      "clk_i",        "clk_xmpl_i",               "port",      "NONE",          ""],
         ["i_xmpl_flt",      "reset_n_i",    "reset_xmpl_n_i",           "port",      "NONE",          ""],
         ["i_xmpl_flt",      "en_flt_i",     "en_xmpl_dsp_flt_i",        "port",      "xmpl_dsp",      "en_xmpl_dsp_flt_s"],
-        ["i_xmpl_flt",      "flt_a7_i",     "xmpl_dsp_flt_a7_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_flt_a7_s"],
-        ["i_xmpl_flt",      "flt_b8_i",     "xmpl_dsp_flt_b8_i",        "port",      "top_xmpl",      "xmpl_riscv_dsp_flt_b8_s"],
-        ["i_xmpl_flt",      "flt_c23_o",    "xmpl_dsp_flt_c23_o",       "port",      "top_xmpl",      "xmpl_riscv_dsp_flt_c23_s"],
+        ["i_xmpl_flt",      "flt_a7_i",     "xmpl_dsp_flt_a7_i",        "port",      "xmpl_top",      "xmpl_riscv_dsp_flt_a7_s"],
+        ["i_xmpl_flt",      "flt_b8_i",     "xmpl_dsp_flt_b8_i",        "port",      "xmpl_top",      "xmpl_riscv_dsp_flt_b8_s"],
+        ["i_xmpl_flt",      "flt_c23_o",    "xmpl_dsp_flt_c23_o",       "port",      "xmpl_top",      "xmpl_riscv_dsp_flt_c23_s"],
         ["i_xmpl_flt",      "flt_status_o", "xmpl_dsp_flt_status_o",    "port",      "xmpl_dsp",      "xmpl_dsp_flt_status_s"],
 
         ["i_xmpl_dsp_fsm",  "NIHAO",                    "14",                       "para", "NONE",          ""],
         ["i_xmpl_dsp_fsm",  "HHH",                      "9",                        "para", "NONE",          ""],
         ["i_xmpl_dsp_fsm",  "clk_i",                    "clk_xmpl_i",               "port", "NONE",          ""],
         ["i_xmpl_dsp_fsm",  "reset_n_i",                "reset_xmpl_n_i",           "port", "NONE",          ""],
-        ["i_xmpl_dsp_fsm",  "en_xmpl_dsp_fsm_i",        "en_xmpl_dsp_fsm_i",        "port", "top_xmpl",      "en_dsp_fsm_s"],
+        ["i_xmpl_dsp_fsm",  "en_xmpl_dsp_fsm_i",        "en_xmpl_dsp_fsm_i",        "port", "xmpl_top",      "en_dsp_fsm_s"],
         ["i_xmpl_dsp_fsm",  "xmpl_dsp_cic_status_i",    "xmpl_dsp_cic_status_i",    "port", "xmpl_dsp",      "xmpl_dsp_cic_status_s"],
         ["i_xmpl_dsp_fsm",  "xmpl_dsp_fft_status_i",    "xmpl_dsp_fft_status_i",    "port", "xmpl_dsp",      "xmpl_dsp_fft_status_s"],
         ["i_xmpl_dsp_fsm",  "xmpl_dsp_flt_status_i",    "xmpl_dsp_flt_status_i",    "port", "xmpl_dsp",      "xmpl_dsp_flt_status_s"],
         ["i_xmpl_dsp_fsm",  "en_xmpl_dsp_cic_o",        "en_xmpl_dsp_cic_o",        "port", "xmpl_dsp",      "en_xmpl_dsp_cic_s"],
         ["i_xmpl_dsp_fsm",  "en_xmpl_dsp_fft_o",        "en_xmpl_dsp_fft_o",        "port", "xmpl_dsp",      "en_xmpl_dsp_fft_s"],
         ["i_xmpl_dsp_fsm",  "en_xmpl_dsp_flt_o",        "en_xmpl_dsp_flt_o",        "port", "xmpl_dsp",      "en_xmpl_dsp_flt_s"],
-        ["i_xmpl_dsp_fsm",  "xmpl_dsp_fsm_state_o",     "xmpl_dsp_fsm_state_o",     "port", "top_xmpl",      "xmpl_dsp_fsm_state_s"],
+        ["i_xmpl_dsp_fsm",  "xmpl_dsp_fsm_state_o",     "xmpl_dsp_fsm_state_o",     "port", "xmpl_top",      "xmpl_dsp_fsm_state_s"],
 
         ["i_xmpl_sram",     "clk_i",        "clk_sram_s",           "wire", "", ""],
         ["i_xmpl_sram",     "reset_n_i",    "reset_xmpl_n_i",       "port", "NONE", ""],
@@ -103,22 +103,22 @@
 
         ["i_xmpl_riscv",  "clk_i",                  "clk_xmpl_i",                   "port",      "NONE",        ""],
         ["i_xmpl_riscv",  "reset_n_i",              "reset_xmpl_n_i",               "port",      "NONE",        ""],
-        ["i_xmpl_riscv",  "riscv_dsp_cic_a12_o",    "xmpl_riscv_dsp_cic_a12_o",     "port",      "top_xmpl",    "xmpl_riscv_dsp_cic_a12_s"],
-        ["i_xmpl_riscv",  "riscv_dsp_cic_b15_o",    "xmpl_riscv_dsp_cic_b15_o",     "port",      "top_xmpl",    "xmpl_riscv_dsp_cic_b15_s"],
-        ["i_xmpl_riscv",  "riscv_dsp_cic_c32_i",    "xmpl_riscv_dsp_cic_c32_i",     "port",      "top_xmpl",    "xmpl_riscv_dsp_cic_c32_s"],
-        ["i_xmpl_riscv",  "riscv_dsp_fft_a2_o",     "xmpl_riscv_dsp_fft_a2_o",      "port",      "top_xmpl",    "xmpl_riscv_dsp_fft_a2_s "],
-        ["i_xmpl_riscv",  "riscv_dsp_fft_b4_o",     "xmpl_riscv_dsp_fft_b4_o",      "port",      "top_xmpl",    "xmpl_riscv_dsp_fft_b4_s "],
-        ["i_xmpl_riscv",  "riscv_dsp_fft_c16_i",    "xmpl_riscv_dsp_fft_c16_i",     "port",      "top_xmpl",    "xmpl_riscv_dsp_fft_c16_s"],
-        ["i_xmpl_riscv",  "riscv_dsp_flt_a7_o",     "xmpl_riscv_dsp_flt_a7_o",      "port",      "top_xmpl",    "xmpl_riscv_dsp_flt_a7_s "],
-        ["i_xmpl_riscv",  "riscv_dsp_flt_b8_o",     "xmpl_riscv_dsp_flt_b8_o",      "port",      "top_xmpl",    "xmpl_riscv_dsp_flt_b8_s "],
-        ["i_xmpl_riscv",  "riscv_dsp_flt_c23_i",    "xmpl_riscv_dsp_flt_c23_i",     "port",      "top_xmpl",    "xmpl_riscv_dsp_flt_c23_s"],
-        ["i_xmpl_riscv",  "riscv_sram_en_sram_o",   "xmpl_riscv_sram_en_sram_o",    "port",      "top_xmpl",    "en_xmpl_sram_s"],
-        ["i_xmpl_riscv",  "riscv_sram_sram_addr_o", "xmpl_riscv_sram_sram_addr_o",  "port",      "top_xmpl",    "xmpl_sram_addr_s"],
-        ["i_xmpl_riscv",  "riscv_sram_sram_rw_o",   "xmpl_riscv_sram_sram_rw_o",    "port",      "top_xmpl",    "xmpl_sram_rw_s"],
-        ["i_xmpl_riscv",  "riscv_sram_sram_data_o", "xmpl_riscv_sram_sram_data_o",  "port",      "top_xmpl",    "xmpl_sram_data_in_s"],
-        ["i_xmpl_riscv",  "riscv_sram_sram_data_i", "xmpl_riscv_sram_sram_data_i",  "port",      "top_xmpl",    "xmpl_sram_data_out_s"],
-        ["i_xmpl_riscv",  "riscv_en_dsp_fsm_o",     "xmpl_riscv_en_dsp_fsm_o",      "port",      "top_xmpl",    "en_dsp_fsm_s"],
-        ["i_xmpl_riscv",  "riscv_dsp_fsm_state_i",  "xmpl_riscv_dsp_fsm_state_i",   "port",      "top_xmpl",    "xmpl_dsp_fsm_state_s"],
+        ["i_xmpl_riscv",  "riscv_dsp_cic_a12_o",    "xmpl_riscv_dsp_cic_a12_o",     "port",      "xmpl_top",    "xmpl_riscv_dsp_cic_a12_s"],
+        ["i_xmpl_riscv",  "riscv_dsp_cic_b15_o",    "xmpl_riscv_dsp_cic_b15_o",     "port",      "xmpl_top",    "xmpl_riscv_dsp_cic_b15_s"],
+        ["i_xmpl_riscv",  "riscv_dsp_cic_c32_i",    "xmpl_riscv_dsp_cic_c32_i",     "port",      "xmpl_top",    "xmpl_riscv_dsp_cic_c32_s"],
+        ["i_xmpl_riscv",  "riscv_dsp_fft_a2_o",     "xmpl_riscv_dsp_fft_a2_o",      "port",      "xmpl_top",    "xmpl_riscv_dsp_fft_a2_s "],
+        ["i_xmpl_riscv",  "riscv_dsp_fft_b4_o",     "xmpl_riscv_dsp_fft_b4_o",      "port",      "xmpl_top",    "xmpl_riscv_dsp_fft_b4_s "],
+        ["i_xmpl_riscv",  "riscv_dsp_fft_c16_i",    "xmpl_riscv_dsp_fft_c16_i",     "port",      "xmpl_top",    "xmpl_riscv_dsp_fft_c16_s"],
+        ["i_xmpl_riscv",  "riscv_dsp_flt_a7_o",     "xmpl_riscv_dsp_flt_a7_o",      "port",      "xmpl_top",    "xmpl_riscv_dsp_flt_a7_s "],
+        ["i_xmpl_riscv",  "riscv_dsp_flt_b8_o",     "xmpl_riscv_dsp_flt_b8_o",      "port",      "xmpl_top",    "xmpl_riscv_dsp_flt_b8_s "],
+        ["i_xmpl_riscv",  "riscv_dsp_flt_c23_i",    "xmpl_riscv_dsp_flt_c23_i",     "port",      "xmpl_top",    "xmpl_riscv_dsp_flt_c23_s"],
+        ["i_xmpl_riscv",  "riscv_sram_en_sram_o",   "xmpl_riscv_sram_en_sram_o",    "port",      "xmpl_top",    "en_xmpl_sram_s"],
+        ["i_xmpl_riscv",  "riscv_sram_sram_addr_o", "xmpl_riscv_sram_sram_addr_o",  "port",      "xmpl_top",    "xmpl_sram_addr_s"],
+        ["i_xmpl_riscv",  "riscv_sram_sram_rw_o",   "xmpl_riscv_sram_sram_rw_o",    "port",      "xmpl_top",    "xmpl_sram_rw_s"],
+        ["i_xmpl_riscv",  "riscv_sram_sram_data_o", "xmpl_riscv_sram_sram_data_o",  "port",      "xmpl_top",    "xmpl_sram_data_in_s"],
+        ["i_xmpl_riscv",  "riscv_sram_sram_data_i", "xmpl_riscv_sram_sram_data_i",  "port",      "xmpl_top",    "xmpl_sram_data_out_s"],
+        ["i_xmpl_riscv",  "riscv_en_dsp_fsm_o",     "xmpl_riscv_en_dsp_fsm_o",      "port",      "xmpl_top",    "en_dsp_fsm_s"],
+        ["i_xmpl_riscv",  "riscv_dsp_fsm_state_i",  "xmpl_riscv_dsp_fsm_state_i",   "port",      "xmpl_top",    "xmpl_dsp_fsm_state_s"],
         ["i_xmpl_riscv",  "riscv_2loongson_o",      "xmpl_loongson_s",              "wire",      "",            ""],
         ["i_xmpl_riscv",  "riscv_2stone_o",         "xmpl_stone_s",                 "wire",      "",            ""],
 
@@ -133,17 +133,17 @@
     "gen_customized_code":
     [
         ["see_point",       "gen_anchor",               "insert_content"],
-        ["top_xmpl",        "anchor_gen_incl_imp",      "// Hello From anchor_gen_incl_imp"],
-        ["top_xmpl",        "anchor_gen_parameter",     "// Hello From anchor_gen_parameter"],
-        ["top_xmpl",        "anchor_gen_port",          "// Hello From anchor_gen_port"],
-        ["top_xmpl",        "anchor_gen_localpara",     "// Hello From anchor_gen_localpara"],
-        ["top_xmpl",        "anchor_gen_struct",        "// Hello From anchor_gen_struct"],
-        ["top_xmpl",        "anchor_gen_wire_begin",    "// Hello From anchor_gen_wire_begin"],
-        ["top_xmpl",        "anchor_gen_wire_end",      "// Hello From anchor_gen_wire_end"],
-        ["top_xmpl",        "anchor_gen_assign",        "// Hello From anchor_gen_assign"],
-        ["top_xmpl",        "anchor_gen_inst_begin",    "// Hello From anchor_gen_inst_begin"],
-        ["top_xmpl",        "anchor_gen_inst_end",      "// Hello From anchor_gen_inst_end"],
-        ["top_xmpl",        "anchor_gen_code",          "// Hello From anchor_gen_code"]
+        ["xmpl_top",        "anchor_gen_incl_imp",      "// Hello From anchor_gen_incl_imp"],
+        ["xmpl_top",        "anchor_gen_parameter",     "// Hello From anchor_gen_parameter"],
+        ["xmpl_top",        "anchor_gen_port",          "// Hello From anchor_gen_port"],
+        ["xmpl_top",        "anchor_gen_localpara",     "// Hello From anchor_gen_localpara"],
+        ["xmpl_top",        "anchor_gen_struct",        "// Hello From anchor_gen_struct"],
+        ["xmpl_top",        "anchor_gen_wire_begin",    "// Hello From anchor_gen_wire_begin"],
+        ["xmpl_top",        "anchor_gen_wire_end",      "// Hello From anchor_gen_wire_end"],
+        ["xmpl_top",        "anchor_gen_assign",        "// Hello From anchor_gen_assign"],
+        ["xmpl_top",        "anchor_gen_inst_begin",    "// Hello From anchor_gen_inst_begin"],
+        ["xmpl_top",        "anchor_gen_inst_end",      "// Hello From anchor_gen_inst_end"],
+        ["xmpl_top",        "anchor_gen_code",          "// Hello From anchor_gen_code"]
 
     ]
 }

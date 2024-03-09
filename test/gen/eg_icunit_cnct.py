@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 from icunit import icunit_cnct
 
 BASEPATH=os.environ.get("HOME")
@@ -38,5 +38,5 @@ if False:
 # To gen with json
 ##########################
 
-icunit_cnct_i.cnct_blks(f"{BASEPATH}/ictoolbox/test/gen/top_proj.json", f"{BASEPATH}/ictoolbox/test/gen", remove_anchor=False)
+icunit_cnct_i.cnct_blks(f"{BASEPATH}/ictoolbox/test/gen/xmpl_top.json", f"{BASEPATH}/ictoolbox/test/gen", remove_anchor=False)
 
