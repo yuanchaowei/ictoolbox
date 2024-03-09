@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import warnings
 
-class ic_cnct:
+class icunit_cnct:
     def __init__(self, **kwargs):
         self.indent_default = kwargs.setdefault("indent_default", 4)
         self.indent = "    "    # later change

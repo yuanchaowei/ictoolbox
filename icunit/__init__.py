@@ -1,6 +1,8 @@
-from ._ic_cnct import ic_cnct
+from ._icunit_cnct import icunit_cnct
+from ._icunit_tb import icunit_tb
 
 __all__ = [
-        "ic_cnct"
+        "icunit_cnct",
+        "icunit_tb"
         ]
 
