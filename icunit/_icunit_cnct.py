@@ -5,10 +5,36 @@ import pandas as pd
 import numpy as np
 import warnings
 
+# ########################################################
+# The class icunit_cnct has two main functions:
+#   run_gen_cnct_blk and run_gen_cnct_blks.
+# The class icunit_cnct does connection of single block and blocks.
+# The class icunit_cnct provides basic functions to extract information from given files.
+# The structure of main functions, sub-functions and common functions:
+#   run_gen_cnct_blk:               # Gen connected single block
+#       _cnct_blk_gen_paraport          # Do connection for listed ports
+#       _cnct_blk_get_paraport          # Get parameter and port of module and store them in pandas dataframe
+#   run_gen_cnct_blks:              # Gen connected top and middle levels refers to given jsonfile 
+#       _read_json                      # Read json file
+#       _extract_archi                  # Extract archi described in jsonfile
+#       _extract_wiring                 # Extract wiring described in jsonfile
+#       _extract_moduleinfo             # Extract module information, the modulename, direction, width and portname
+#       _extract_paravalue              # Extract parameter value
+#       _extract_custmozized_code       # Rxtract customized code from json
+#       _cnct_blks_gen_structure        # Gen the basic structure, locate anchors
+#       _cnct_blks_gen_wiring           # Gen wiring, but some lines for logic and module port are duplicated
+#       _cnct_blks_gen_wiring_post      # Gen wiring only for generated modules, non-connected module ports automatically as io to higher level
+#       _cnct_blks_gen_bugfix           # Gen bugs fixed, remove duplicated information for logic etc.
+#       _cnct_blks_gen_customcode       # Gen customized code extract by _extract_custmozized_code in anchor
+#       _cnct_blks_gen_beauty           # Gen beauty, make the coding better view
+#   Common Functions:               # Basic functions for reuse in blocks gen
+#       __fetch_portinfo                # Fetch port info, direction and width, by given instance name and cnct_port described in json file (extracted)
+#       __find_anchor_insert            # Find anchor and insert the content
+# ########################################################
 class icunit_cnct:
     def __init__(self, **kwargs):
         self.indent_default = kwargs.setdefault("indent_default", 4)
-        self.indent = "    "    # later change
+        self.indent = "    "
 
         self.json_data = []
 
@@ -33,7 +59,11 @@ class icunit_cnct:
         self.df_paravalue       = []
         self.df_customized_code = []
  
-    # Generation of para and ports in format .xxx(xxx)
+    # ###########################################################################################
+    # Single block connection
+    # ###########################################################################################
+
+    # function _cnct_blk_gen_paraport to generate para and ports in format .xxx(xxx)
     def _cnct_blk_gen_paraport(self, lst_port, lst_cnct=[], default_connect=False):
         content = []
         str1 = self.indent + "."            # indent
@@ -74,7 +104,7 @@ class icunit_cnct:
                         content.append("%s%-*s %s%-*s%s" %(str1, num2, str2, str3, num4, str4, str5))
         return content 
 
-    # Extract the parameters and ports
+    # function _cnct_blk_get_paraport to extract the parameters and ports
     def _cnct_blk_get_paraport(self, path2module):
         module_name = None
         dict_para = {'parameter': [], 'default_value': []}
@@ -120,7 +150,7 @@ class icunit_cnct:
         df_port = pd.DataFrame.from_dict(dict_port)
         return module_name, df_para, df_port
     
-    # Connect the single module
+    # function run_gen_cnct_blk to connect the single module
     def run_gen_cnct_blk(self, path2module, instance_name="", output2path="", default_connect=False, doprint=True):
         # get info from readfile
         module_name, df_para, df_port = self._cnct_blk_get_paraport(path2module)
@@ -151,12 +181,9 @@ class icunit_cnct:
                 print(line)
         return content
 
-    #
-    #
+    # ###########################################################################################
     # Prepare for connecting multiple modules
-    #
-    #
-
+    # ###########################################################################################
     def _read_json(self, jsonfile):
         f = open(jsonfile)
         self.json_data = json.load(f)
@@ -304,9 +331,9 @@ class icunit_cnct:
         self.df_customized_code = pd.DataFrame(self.json_customized_code[1:], columns=self.json_customized_code[0])
         #print(self.df_customized_code)
 
-    #
-    # The following functions used to main process
-    #
+    # ###########################################################################################
+    # The following functions are common functions used to main process
+    # ###########################################################################################
 
     # Common function: __fetch_portinfo to get port direction and length
     def __fetch_portinfo(self, inst_name, port_name):
@@ -334,6 +361,9 @@ class icunit_cnct:
                 break
         return content
 
+    # ###########################################################################################
+    # Generation of blocks
+    # ###########################################################################################
     # Main process function: _cnct_blks_gen_structure to create basic file structure, locate all anchors
     def _cnct_blks_gen_structure(self, gen_module, gen_instance, content):
         # create top module name and anchors
@@ -445,7 +475,6 @@ class icunit_cnct:
                 pass
             elif cnct_type == "struct": # Pelase use "gen_customized_code" to declare the struct
                 pass
-
 
         for i in range(len(wiring_low_level)):
             inst_name = wiring_low_level['inst_name'][i]
@@ -559,8 +588,8 @@ class icunit_cnct:
 
         return content
 
-    # Main process function: _cnct_blks_customize to create customized code based on anchors
-    def _cnct_blks_gen_cutomcode(self, gen_module, gen_instance, content):
+    # Main process function: _cnct_blks_gen_customcode to create customized code based on anchors
+    def _cnct_blks_gen_customcode(self, gen_module, gen_instance, content):
         if self.df_customized_code[self.df_customized_code['see_point'] == gen_module].empty:
             print(f"No customized code added in {gen_module}")
         else:
@@ -741,7 +770,7 @@ class icunit_cnct:
             content = self._cnct_blks_gen_wiring(gen_module, gen_instance, content)
             content = self._cnct_blks_gen_wiring_post(gen_module, gen_instance, content)
             content = self._cnct_blks_gen_bugfix(content)
-            content = self._cnct_blks_gen_cutomcode(gen_module, gen_instance, content)
+            content = self._cnct_blks_gen_customcode(gen_module, gen_instance, content)
             content = self._cnct_blks_gen_beauty(content, remove_anchor=remove_anchor)
 
             # write the file
