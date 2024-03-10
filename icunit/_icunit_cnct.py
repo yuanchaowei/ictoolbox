@@ -279,32 +279,37 @@ class icunit_cnct:
             pass
 
     def _extract_wiring(self):
-        self.df_gen_wiring = pd.DataFrame(self.json_wiring[1:], columns=self.json_wiring[0])
-        keys = self.df_gen_wiring.keys()
-        for key in keys:
-            self.df_gen_wiring[key] = self.df_gen_wiring[key].str.replace(" ", "")
+        try:
+            self.df_gen_wiring = pd.DataFrame(self.json_wiring[1:], columns=self.json_wiring[0])
+            keys = self.df_gen_wiring.keys()
+            for key in keys:
+                self.df_gen_wiring[key] = self.df_gen_wiring[key].str.replace(" ", "")
 
-        #
-        # The "port_name" is "not necessary" to avoid the duplication in different instances.
-        #       Because the code will avoid wrong location. The connection will find "Anchor".
-        # The port names in "cnct_name" with "see_point" MUST have no duplicaton!!! 
-        #       Becasue there will be no code and no locating by "Anchor"
-        #       So the cnct_name must be 
-        #
-        
-        #
-        # Check duplication of "cnct_name"
-        #
+            #
+            # The "port_name" is "not necessary" to avoid the duplication in different instances.
+            #       Because the code will avoid wrong location. The connection will find "Anchor".
+            # The port names in "cnct_name" with "see_point" MUST have no duplicaton!!! 
+            #       Becasue there will be no code and no locating by "Anchor"
+            #       So the cnct_name must be 
+            #
+            
+            #
+            # Check duplication of "cnct_name"
+            #
 
-        # Find all index with wire_name, connection in higher level
-        #idx_list = self.df_gen_wiring.index[(self.df_gen_wiring['see_point'] != "NONE") & (self.df_gen_wiring['see_point'] != "")].tolist()
-        idx_list = self.df_gen_wiring.index[self.df_gen_wiring['wire_name'] != ""].tolist()
-        # Combine them to new dataframe
-        df = self.df_gen_wiring.iloc[idx_list].reset_index(drop=False)
-        # Check cnct_name duplications in the new dataframe
-        for i in range(len(df)):
-            if df['cnct_name'][i] in df['cnct_name'][1 + i:].tolist():
-                sys.exit(f"In \"cnct_name\" port name {df['cnct_name'][i]} is duplicated.")
+            # Find all index with wire_name, connection in higher level
+            #idx_list = self.df_gen_wiring.index[(self.df_gen_wiring['see_point'] != "NONE") & (self.df_gen_wiring['see_point'] != "")].tolist()
+            idx_list = self.df_gen_wiring.index[self.df_gen_wiring['wire_name'] != ""].tolist()
+            # Combine them to new dataframe
+            df = self.df_gen_wiring.iloc[idx_list].reset_index(drop=False)
+            # Check cnct_name duplications in the new dataframe
+            for i in range(len(df)):
+                if df['cnct_name'][i] in df['cnct_name'][1 + i:].tolist():
+                    sys.exit(f"In \"cnct_name\" port name {df['cnct_name'][i]} is duplicated.")
+        except:
+            self.df_gen_wiring = pd.DataFrame([], columns= ["inst_name", "port_name", "cnct_name", "cnct_type", "see_point", "wire_name"],)
+            warnings.warn(f"Wrong format with gen_wiring in json or gen without any wiring")
+
 
     def _extract_moduleinfo(self):
         # Only need the filelist in json file. extract the para and port names
@@ -328,8 +333,12 @@ class icunit_cnct:
             print(self.df_paravalue)
 
     def _extract_custmozized_code(self):
-        self.df_customized_code = pd.DataFrame(self.json_customized_code[1:], columns=self.json_customized_code[0])
-        #print(self.df_customized_code)
+        try:
+            self.df_customized_code = pd.DataFrame(self.json_customized_code[1:], columns=self.json_customized_code[0])
+            #print(self.df_customized_code)
+        except:
+            self.df_customized_code = pd.DataFrame([], columns= ["see_point", "gen_anchor", "insert_content"])
+            warnings.warn(f"Wrong format with gen_customized_code in json or gen without any customized code")
 
     # ###########################################################################################
     # The following functions are common functions used to main process
@@ -746,11 +755,8 @@ class icunit_cnct:
         # output content
         #
         return content
-
-    def run_gen_cnct_blks(self, jsonfile, output2path, remove_anchor=True):
+    def _run_gen_cnct_blks_main(self, output2path, remove_anchor=True):
         self.gen_outpath = output2path
-        # Read json file which has all connection setups
-        self._read_json(jsonfile)
         # Extract the project architecture and prepare data for main process
         self._extract_archi()
         self._extract_wiring()
@@ -777,4 +783,10 @@ class icunit_cnct:
             with open(f"{self.gen_outpath}/{gen_module}.sv", "w") as f:
                 for line in content:
                     f.write(f"{line}\n")
+
+    def run_gen_cnct_blks(self, jsonfile, output2path, remove_anchor=True):
+        # Read json file which has all connection setups
+        self._read_json(jsonfile)
+        self._run_gen_cnct_blks_main(output2path, remove_anchor)
+
 

@@ -160,47 +160,37 @@ class icunit_tb(icunit_cnct):
 
         return content
 
-    def _run_gen_tb_blks(self, jsonfile, output2path, remove_anchor):
+
+    def run_gen_tb(self, filepath, output2path, remove_anchor=True):
         self.gen_outpath = output2path
-        # Read json file which has all connection setups
-        self._read_json(jsonfile)
-        # Extract the project architecture and prepare data for main process
-        self._extract_archi()
-        self._extract_wiring()
-        self._extract_moduleinfo()
-        self._extract_paravalue()
-        self._extract_custmozized_code()
-        # Main process, Do generation per level
-        for i in range(len(self.gen_archi))[:]:
-            content = []
-            dict_archi = self.gen_archi[-i-1] # the gen should backward
-            gen_module   = list(dict_archi.keys())[0] # the module name
-            gen_instance = list(dict_archi.values())[0] # sub modules (instances) should in module
-            print(f"\nStart gen block: {gen_module}. Needed sub level modules: {gen_instance}")
 
-            # Most important steps
-            content = self._cnct_blks_gen_structure(gen_module, gen_instance, content)
-            content = self._cnct_blks_gen_wiring(gen_module, gen_instance, content)
-            content = self._cnct_blks_gen_wiring_post(gen_module, gen_instance, content)
-            content = self._cnct_blks_gen_bugfix(content)
-            content = self._cnct_blks_gen_customcode(gen_module, gen_instance, content)
-            content = self._cnct_blks_gen_beauty(content, remove_anchor=remove_anchor)
+        if filepath[-4:] == "json":
+            print(f"Jsonfile detected: {filepath}")
+            self._read_json(filepath)
+            self._run_gen_cnct_blks_main(output2path, remove_anchor)
 
-            # write the file
-            with open(f"{self.gen_outpath}/{gen_module}.sv", "w") as f:
-                for line in content:
-                    f.write(f"{line}\n")
+        elif filepath[-2:] == "sv":
+            print(f"Module filepath detected: {filepath}")
+            module_name, df_para, df_port = self._cnct_blk_get_paraport(filepath)
+            self.json_info_filelist         = {module_name: filepath}
+            self.json_archi                 = {f"tb_{module_name}" : {f"i_{module_name}": module_name}}
+            self.json_anchor                = {
+                "anchor_gen_incl_imp"       : "// Anchor gen_incl_imp",
+                "anchor_gen_parameter"      : "// Anchor gen_parameter",
+                "anchor_gen_port"           : "// Anchor gen_port",
+                "anchor_gen_localpara"      : "// Anchor gen_localpara",
+                "anchor_gen_struct"         : "// Anchor gen_struct",
+                "anchor_gen_wire_begin"     : "// Anchor gen_wire_begin",
+                "anchor_gen_wire_end"       : "// Anchor gen_wire_end",
+                "anchor_gen_assign"         : "// Anchor gen_assign",
+                "anchor_gen_inst_begin"     : "// Anchor gen_inst_begin",
+                "anchor_gen_inst_end"       : "// Anchor gen_inst_end",
+                "anchor_gen_code"           : "// Anchor gen_code"
+                }
+            #self.json_wiring                = []
+            #self.json_customized_code       = []
+            self._run_gen_cnct_blks_main(output2path, remove_anchor)
 
-    def _run_gen_tb_blk(self, file, output2path, remove_anchor):
-        pass
-
-    def run_gen_tb(self, file, output2path, remove_anchor=True):
-        if file[-4:] == "json":
-            print(f"Jsonfile detected: {file}")
-            self._run_gen_tb_blks(file, output2path, remove_anchor)
-        elif file[-2:] == "sv":
-            print(f"Module file detected: {file}")
-            self._run_gen_tb_blk(file, output2path, remove_anchor)
         else:
-            sys.exit(f"Path is not a jsonfile or a sv module file: {file}")
+            sys.exit(f"Path is not a jsonfile or a sv module filepath: {filepath}")
 
