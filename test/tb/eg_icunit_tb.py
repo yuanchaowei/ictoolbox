@@ -12,5 +12,5 @@ icunit_tb_i = icunit_tb()
 # To gen with json
 ##########################
 
-icunit_tb_i.cnct_blks(f"{BASEPATH}/ictoolbox/test/tb/tb_xmpl.json", f"{BASEPATH}/ictoolbox/test/tb", remove_anchor=False)
+icunit_tb_i.run_gen_tb(f"{BASEPATH}/ictoolbox/test/tb/tb_xmpl.json", f"{BASEPATH}/ictoolbox/test/tb", remove_anchor=False)
 

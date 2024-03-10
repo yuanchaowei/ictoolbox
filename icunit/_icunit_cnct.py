@@ -34,7 +34,7 @@ class icunit_cnct:
         self.df_customized_code = []
  
     # Generation of para and ports in format .xxx(xxx)
-    def _gen_para_port(self, lst_port, lst_cnct=[], default_connect=False):
+    def _cnct_blk_gen_paraport(self, lst_port, lst_cnct=[], default_connect=False):
         content = []
         str1 = self.indent + "."            # indent
         num2 = 0                            # default length
@@ -44,7 +44,7 @@ class icunit_cnct:
         str4 = ""                           # cnct name
         str5 = "),"                         # right bracket
         if lst_port == []:
-            #warnings.warn(f"Empty list is inputted to function _gen_para_port")
+            #warnings.warn(f"Empty list is inputted to function _cnct_blk_gen_paraport")
             pass
         else:
             if default_connect:
@@ -63,7 +63,7 @@ class icunit_cnct:
                         if i == len(lst_port) - 1 : str5 = ")"
                         content.append("%s%-*s %s%-*s%s" %(str1, num2, str2, str3, num4, str4, str5))
                 elif len(lst_port) != len(lst_cnct):
-                    sys.exit(f"Input lists in function _gen_para_port have different length")
+                    sys.exit(f"Input lists in function _cnct_blk_gen_paraport have different length")
                 else:
                     num2 = len(max(lst_port, key=len))  # max length port name
                     num4 = len(max(lst_cnct, key=len))  # length in bracket, 0 if no default port connected
@@ -75,7 +75,7 @@ class icunit_cnct:
         return content 
 
     # Extract the parameters and ports
-    def get_para_port(self, path2module):
+    def _cnct_blk_get_paraport(self, path2module):
         module_name = None
         dict_para = {'parameter': [], 'default_value': []}
         dict_port = {'direction': [], 'width': [], 'port': []}
@@ -121,9 +121,9 @@ class icunit_cnct:
         return module_name, df_para, df_port
     
     # Connect the single module
-    def cnct_blk(self, path2module, instance_name="", output2path="", default_connect=False, doprint=True):
+    def run_gen_cnct_blk(self, path2module, instance_name="", output2path="", default_connect=False, doprint=True):
         # get info from readfile
-        module_name, df_para, df_port = self.get_para_port(path2module)
+        module_name, df_para, df_port = self._cnct_blk_get_paraport(path2module)
         lst_para = list(df_para['parameter'])
         lst_port = list(df_port['port'])
 
@@ -134,13 +134,13 @@ class icunit_cnct:
         content = []
         if lst_para == []: # if no para
             content.append(f"{module_name} {instance_name}")
-            content = content + self._gen_para_port(lst_para, lst_cnct=[], default_connect=default_connect)
+            content = content + self._cnct_blk_gen_paraport(lst_para, lst_cnct=[], default_connect=default_connect)
             content.append(f"(")
         else:
             content.append(f"{module_name} {instance_name} #(")
-            content = content + self._gen_para_port(lst_para, lst_cnct=[], default_connect=default_connect)
+            content = content + self._cnct_blk_gen_paraport(lst_para, lst_cnct=[], default_connect=default_connect)
             content.append(f")(")
-        content = content + self._gen_para_port(lst_port, lst_cnct=[], default_connect=default_connect)
+        content = content + self._cnct_blk_gen_paraport(lst_port, lst_cnct=[], default_connect=default_connect)
         content.append(f");")
         if output2path:
             with open(output2path, "w") as f:
@@ -157,7 +157,7 @@ class icunit_cnct:
     #
     #
 
-    def _cnct_blks_readjson(self, jsonfile):
+    def _read_json(self, jsonfile):
         f = open(jsonfile)
         self.json_data = json.load(f)
         f.close()
@@ -283,7 +283,7 @@ class icunit_cnct:
         # Only need the filelist in json file. extract the para and port names
         for module in list(self.json_info_filelist.keys()):
             path2module = self.json_info_filelist[module]
-            module_name, df_para, df_port = self.get_para_port(path2module)
+            module_name, df_para, df_port = self._cnct_blk_get_paraport(path2module)
             if module_name != module:
                 sys.exit(f"In json filelist, module name {module} is not match to the module name {module_name} in {path2module}")
             self.dict_portinfo = {**self.dict_portinfo, **{module_name: df_port}}
@@ -334,8 +334,8 @@ class icunit_cnct:
                 break
         return content
 
-    # Main process function: _cnct_blks_base_structuring to create basic file structure, locate all anchors
-    def _cnct_blks_base_structuring(self, gen_module, gen_instance, content):
+    # Main process function: _cnct_blks_gen_structure to create basic file structure, locate all anchors
+    def _cnct_blks_gen_structure(self, gen_module, gen_instance, content):
         # create top module name and anchors
         content.append(self.json_anchor["anchor_gen_incl_imp"])
         content.append(f"module {gen_module}")
@@ -376,7 +376,7 @@ class icunit_cnct:
 
             # instantiation
             content.append(f"// Anchor {module_name} {instance_name}")
-            content = content + self.cnct_blk(path2module, instance_name, default_connect=False, doprint=False)
+            content = content + self.run_gen_cnct_blk(path2module, instance_name, default_connect=False, doprint=False)
             content.append("")
 
         content.append(self.json_anchor["anchor_gen_inst_end"])
@@ -388,8 +388,8 @@ class icunit_cnct:
         content.append(f"")
         return content
 
-    # Main process function: _cnct_blks_wiring to build the basic connection, including parameter
-    def _cnct_blks_wiring(self, gen_module, gen_instance, content):
+    # Main process function: _cnct_blks_gen_wiring to build the basic connection, including parameter
+    def _cnct_blks_gen_wiring(self, gen_module, gen_instance, content):
         print(f"\nStart wiring the {gen_instance} in {gen_module}")
         #print(self.df_gen_wiring)
         idx_list=[]
@@ -473,8 +473,8 @@ class icunit_cnct:
 
         return content
 
-    # Main process function: _cnct_blks_wiring_post to build the extra connections for generated blocks
-    def _cnct_blks_wiring_post(self, gen_module, gen_instance, content):
+    # Main process function: _cnct_blks_gen_wiring_post to build the extra connections for generated blocks
+    def _cnct_blks_gen_wiring_post(self, gen_module, gen_instance, content):
         print(f"\nStart post wiring the {gen_instance} in {gen_module}")
         for instance in gen_instance:
             module_name = None
@@ -509,8 +509,8 @@ class icunit_cnct:
 
         return content
 
-    # Main process function: _cnct_blks_post_fix to fix duplications in ports and logics
-    def _cnct_blks_post_fix(self, content):
+    # Main process function: _cnct_blks_gen_bugfix to fix duplications in ports and logics
+    def _cnct_blks_gen_bugfix(self, content):
         # Fix issue in ports
         del_list = []
         dict_port = {'direction': [], 'width': [], 'port': []}
@@ -560,7 +560,7 @@ class icunit_cnct:
         return content
 
     # Main process function: _cnct_blks_customize to create customized code based on anchors
-    def _cnct_blks_customized_code(self, gen_module, gen_instance, content):
+    def _cnct_blks_gen_cutomcode(self, gen_module, gen_instance, content):
         if self.df_customized_code[self.df_customized_code['see_point'] == gen_module].empty:
             print(f"No customized code added in {gen_module}")
         else:
@@ -571,8 +571,8 @@ class icunit_cnct:
                 content = self.__find_anchor_insert(self.json_anchor[gen_anchor], content, insert_content)
         return content
 
-    # Additional function: _cnct_blks_beauty to make the code beautiful
-    def _cnct_blks_beauty(self, content, remove_anchor=True):
+    # Additional function: _cnct_blks_gen_beauty to make the code beautiful
+    def _cnct_blks_gen_beauty(self, content, remove_anchor=True):
         # ##############################
         # Beauty work for ports
         # ##############################
@@ -700,7 +700,7 @@ class icunit_cnct:
                         lst_port.append(line_split[0])
                         lst_cnct.append(line_split[1])
                 elif ");" in line:
-                    connection = self._gen_para_port(lst_port, lst_cnct)
+                    connection = self._cnct_blk_gen_paraport(lst_port, lst_cnct)
                     for i in range(len(idx_list)):
                         content[idx_list[i]] = connection[i]
                     idx_list = []
@@ -718,8 +718,17 @@ class icunit_cnct:
         #
         return content
 
-    def _cnct_blks_main(self, remove_anchor):
-        # Do generation per level
+    def run_gen_cnct_blks(self, jsonfile, output2path, remove_anchor=True):
+        self.gen_outpath = output2path
+        # Read json file which has all connection setups
+        self._read_json(jsonfile)
+        # Extract the project architecture and prepare data for main process
+        self._extract_archi()
+        self._extract_wiring()
+        self._extract_moduleinfo()
+        self._extract_paravalue()
+        self._extract_custmozized_code()
+        # Main process, Do generation per level
         for i in range(len(self.gen_archi))[:]:
             content = []
             dict_archi = self.gen_archi[-i-1] # the gen should backward
@@ -728,28 +737,15 @@ class icunit_cnct:
             print(f"\nStart gen block: {gen_module}. Needed sub level modules: {gen_instance}")
 
             # Most important steps
-            content = self._cnct_blks_base_structuring(gen_module, gen_instance, content)
-            content = self._cnct_blks_wiring(gen_module, gen_instance, content)
-            content = self._cnct_blks_wiring_post(gen_module, gen_instance, content)
-            content = self._cnct_blks_post_fix(content)
-            content = self._cnct_blks_customized_code(gen_module, gen_instance, content)
-            content = self._cnct_blks_beauty(content, remove_anchor=remove_anchor)
+            content = self._cnct_blks_gen_structure(gen_module, gen_instance, content)
+            content = self._cnct_blks_gen_wiring(gen_module, gen_instance, content)
+            content = self._cnct_blks_gen_wiring_post(gen_module, gen_instance, content)
+            content = self._cnct_blks_gen_bugfix(content)
+            content = self._cnct_blks_gen_cutomcode(gen_module, gen_instance, content)
+            content = self._cnct_blks_gen_beauty(content, remove_anchor=remove_anchor)
 
             # write the file
             with open(f"{self.gen_outpath}/{gen_module}.sv", "w") as f:
                 for line in content:
                     f.write(f"{line}\n")
-
-    def cnct_blks(self, jsonfile, output2path, remove_anchor=True):
-        self.gen_outpath = output2path
-        # Read json file which has all connection setups
-        self._cnct_blks_readjson(jsonfile)
-        # Extract the project architecture and prepare data for main process
-        self._extract_archi()
-        self._extract_wiring()
-        self._extract_moduleinfo()
-        self._extract_paravalue()
-        self._extract_custmozized_code()
-        # Main process
-        self._cnct_blks_main(remove_anchor)
 
