@@ -1,7 +1,7 @@
 {
     "gen_info": 
     { 
-        "top_name": "tb_xmpl",
+        "top_name": "tb_xmpl_processor",
         "filelist_path":"",
         "filelist":
         {
@@ -35,8 +35,8 @@
     [
         ["inst_name",       "port_name",                "cnct_name",                    "cnct_type", "see_point",     "wire_name"],
 
-        ["i_xmpl_riscv",    "clk_i",                    "clk_xmpl_i",                   "port",      "", ""],
-        ["i_xmpl_riscv",    "reset_n_i",                "reset_xmpl_n_i",               "port",      "", ""],
+        ["i_xmpl_riscv",    "clk_i",                    "clk_i",                   "port",      "", ""],
+        ["i_xmpl_riscv",    "reset_n_i",                "reset_n_i",               "port",      "", ""],
         ["i_xmpl_riscv",    "riscv_2loongson_o",        "xmpl_loongson_s",              "wire",      "", ""],
         ["i_xmpl_riscv",    "riscv_2stone_o",           "xmpl_stone_s",                 "wire",      "", ""],
 
@@ -51,8 +51,8 @@
     "gen_customized_code":
     [
         ["see_point",       "gen_anchor",               "insert_content"],
-        ["xmpl_top",        "anchor_gen_code",          "// Hello From anchor_gen_code"]
-
+        ["tb_xmpl_processor",         "anchor_gen_incl_imp",      "`timescale 1ns/10ps"],
+        ["tb_xmpl_processor",         "anchor_gen_incl_imp",      "import pkg_riscv_common::*;"]
     ]
 }
 

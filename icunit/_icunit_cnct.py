@@ -28,8 +28,8 @@ import warnings
 #       _cnct_blks_gen_customcode       # Gen customized code extract by _extract_custmozized_code in anchor
 #       _cnct_blks_gen_beauty           # Gen beauty, make the coding better view
 #   Common Functions:               # Basic functions for reuse in blocks gen
-#       __fetch_portinfo                # Fetch port info, direction and width, by given instance name and cnct_port described in json file (extracted)
-#       __find_anchor_insert            # Find anchor and insert the content
+#       _fetch_portinfo                 # Fetch port info, direction and width, by given instance name and cnct_port described in json file (extracted)
+#       _find_anchor_insert             # Find anchor and insert the content
 # ########################################################
 class icunit_cnct:
     def __init__(self, **kwargs):
@@ -335,8 +335,8 @@ class icunit_cnct:
     # The following functions are common functions used to main process
     # ###########################################################################################
 
-    # Common function: __fetch_portinfo to get port direction and length
-    def __fetch_portinfo(self, inst_name, port_name):
+    # Common function: _fetch_portinfo to get port direction and length
+    def _fetch_portinfo(self, inst_name, port_name):
         module_name = self.df_gen_instance['module_name'][self.df_gen_instance['instance_name'] == inst_name].tolist()[0]
         df_portinfo = self.dict_portinfo[module_name]
         direction   = df_portinfo['direction'][df_portinfo['port'] == port_name].tolist()[0]
@@ -353,8 +353,8 @@ class icunit_cnct:
         #print(direction, width)
         return direction, width
 
-    # Common function: __find_anchor_insert to insert a line to an anchor position
-    def __find_anchor_insert(self, anchor, content, insert_content):
+    # Common function: _find_anchor_insert to insert a line to an anchor position
+    def _find_anchor_insert(self, anchor, content, insert_content):
         for i in range(len(content)):
             if anchor in content[i]:
                 content.insert(i, insert_content)
@@ -460,13 +460,13 @@ class icunit_cnct:
                         break
             # If port, add to module interface, If wire, declaration. If para, do nothing. 
             if cnct_type == "port":
-                direction, width = self.__fetch_portinfo(inst_name, port_name)
+                direction, width = self._fetch_portinfo(inst_name, port_name)
                 insert_content = f"{direction} {width} {cnct_name},"
-                content = self.__find_anchor_insert(self.json_anchor['anchor_gen_port'], content, insert_content)
+                content = self._find_anchor_insert(self.json_anchor['anchor_gen_port'], content, insert_content)
             elif cnct_type == "wire":
-                direction, width = self.__fetch_portinfo(inst_name, port_name)
+                direction, width = self._fetch_portinfo(inst_name, port_name)
                 insert_content = f"logic {width} {cnct_name};"
-                content = self.__find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
+                content = self._find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
             elif cnct_type == "para":
                 pass
             elif cnct_type == "donttouch": # Leave customized connection like 1'b1 and xxxx[x:x] connection.
@@ -495,9 +495,9 @@ class icunit_cnct:
                     warnings.warn(f"Port {cnct_name} in {see_point} is not found")
                     break
 
-            direction, width = self.__fetch_portinfo(inst_name, port_name)
+            direction, width = self._fetch_portinfo(inst_name, port_name)
             insert_content = f"logic {width} {wire_name};"
-            content = self.__find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
+            content = self._find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
         print(f"Finish wiring the {gen_instance} in {gen_module}")
 
         return content
@@ -529,9 +529,9 @@ class icunit_cnct:
                             inst_name = df['inst_name'].tolist()[0]
                             port_name = df['port_name'].tolist()[0]
                             #print(inst_name, port_name)
-                            direction, width = self.__fetch_portinfo(inst_name, port_name)
+                            direction, width = self._fetch_portinfo(inst_name, port_name)
                             insert_content = f"{direction} {width} {cnct_name},"
-                            content = self.__find_anchor_insert(self.json_anchor['anchor_gen_port'], content, insert_content)
+                            content = self._find_anchor_insert(self.json_anchor['anchor_gen_port'], content, insert_content)
                         elif ");" in content[i]:
                             break
         print(f"Finish post wiring the {gen_instance} in {gen_module}")
@@ -581,10 +581,10 @@ class icunit_cnct:
                 insert_content = f"{df_io['direction'][i]} {df_io['width'][i]} {df_io['port'][i]}"
             else:
                 insert_content = f"{df_io['direction'][i]} {df_io['width'][i]} {df_io['port'][i]},"
-            content = self.__find_anchor_insert(self.json_anchor['anchor_gen_port'], content, insert_content)
+            content = self._find_anchor_insert(self.json_anchor['anchor_gen_port'], content, insert_content)
         for i in range(len(df_logic)):
             insert_content = f"{df_logic['direction'][i]} {df_logic['width'][i]} {df_logic['port'][i]};"
-            content = self.__find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
+            content = self._find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
 
         return content
 
@@ -597,7 +597,7 @@ class icunit_cnct:
             for i in range(len(customized_code)):
                 gen_anchor = customized_code['gen_anchor'][i]
                 insert_content = customized_code['insert_content'][i]
-                content = self.__find_anchor_insert(self.json_anchor[gen_anchor], content, insert_content)
+                content = self._find_anchor_insert(self.json_anchor[gen_anchor], content, insert_content)
         return content
 
     # Additional function: _cnct_blks_gen_beauty to make the code beautiful
