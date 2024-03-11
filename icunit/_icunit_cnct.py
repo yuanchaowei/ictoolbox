@@ -119,10 +119,15 @@ class icunit_cnct:
                     dict_para['parameter'].append(line_split[1])
                     try:    # if default value exists, add. Otherwise add None
                         if line[3]:
-                            dict_para['default_value'].append(line_split[3])
+                            dict_para['default_value'].append(line_split[3].replace(",", ""))
                     except:
                         sys.exit(f"{line_split[1]} has no default value, please add!")
                 elif "input" in line or "output" in line: # get port
+                    line = line.replace(" logic ", " ")
+                    line = line.replace(" reg ", " ")
+                    line = line.replace(" wire ", " ")
+                    line = line.replace(" unsigned ", " ")
+                    line = line.replace(" signed ", " ")
                     if ");" in line: # the ); should be in single line
                         sys.exit(f"Please split the ); to the newline!!!")
     

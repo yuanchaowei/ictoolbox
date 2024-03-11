@@ -1,0 +1,49 @@
+{
+    "gen_info": 
+    { 
+        "regfile_name": "xmpl_dsp_regfile"
+    },
+    "gen_anchor":
+    { 
+        "anchor_gen_port"    : "// Anchor gen_port",
+        "anchor_gen_para"    : "// Anchor gen_para",
+        "anchor_gen_wire"    : "// Anchor gen_wire",
+        "anchor_gen_pack"    : "// Anchor gen_pack",
+        "anchor_gen_write"   : "// Anchor gen_write",
+        "anchor_gen_read"    : "// Anchor gen_read",
+        "anchor_gen_crc"     : "// Anchor gen_crc",
+        "anchor_gen_error"   : "// Anchor gen_error",
+        "anchor_gen_code"    : "// Anchor gen_code"
+    },
+    "gen_reg32b": [
+        {
+            "name": "reg_dsp_ctrl_config",
+            "init_value": 0,
+            "bits": [
+                ["start", "end", "type", "name",            "cnct_port"],
+                ["31",    "28",  "rw",   "unused",          ""],
+                ["27",    "24",  "rw",   "ctrl_dsp",        "ctrl_dsp_i"],
+                ["23",    "16",  "w",    "config1",         "config1_dsp_i"],
+                ["15",    "8",   "r",    "config2",         "config2_dsp_i"],
+                ["7",     "0",   "rw",   "config3",         "config3_dsp_i"]
+            ]
+        }
+    ],
+    "gen_customized_code":
+    [
+        ["see_point",       "gen_anchor",               "insert_content"],
+        ["xmpl_top",        "anchor_gen_incl_imp",      "// Hello From anchor_gen_incl_imp"],
+        ["xmpl_top",        "anchor_gen_parameter",     "// Hello From anchor_gen_parameter"],
+        ["xmpl_top",        "anchor_gen_port",          "// Hello From anchor_gen_port"],
+        ["xmpl_top",        "anchor_gen_localpara",     "// Hello From anchor_gen_localpara"],
+        ["xmpl_top",        "anchor_gen_struct",        "// Hello From anchor_gen_struct"],
+        ["xmpl_top",        "anchor_gen_wire_begin",    "// Hello From anchor_gen_wire_begin"],
+        ["xmpl_top",        "anchor_gen_wire_end",      "// Hello From anchor_gen_wire_end"],
+        ["xmpl_top",        "anchor_gen_assign",        "// Hello From anchor_gen_assign"],
+        ["xmpl_top",        "anchor_gen_inst_begin",    "// Hello From anchor_gen_inst_begin"],
+        ["xmpl_top",        "anchor_gen_inst_end",      "// Hello From anchor_gen_inst_end"],
+        ["xmpl_top",        "anchor_gen_code",          "// Hello From anchor_gen_code"]
+
+    ]
+
+}

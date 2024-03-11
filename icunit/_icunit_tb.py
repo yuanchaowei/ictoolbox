@@ -4,7 +4,9 @@ import json
 import pandas as pd
 import numpy as np
 import warnings
-from icunit import icunit_cnct
+
+sys.path.append(os.path.join(os.path.dirname(__file__)))
+from _icunit_cnct import icunit_cnct
 
 class icunit_tb(icunit_cnct):
     def __init__(self, **kwargs):
@@ -136,7 +138,8 @@ class icunit_tb(icunit_cnct):
         for instance in gen_instance:
             instance_name = instance
             module_name = self.df_gen_instance[self.df_gen_instance['instance_name'] == instance_name]['module_name'].tolist()[0]
-            df = self.dict_portinfo[module_name]
+            df_portinfo = self.dict_portinfo[module_name]
+            df_parainfo = self.dict_parainfo[module_name]
             if self.df_gen_instance['instance_name'].isin([instance_name]).any():
                 found_anchor = False
                 for i in range(len(content)):
@@ -148,12 +151,19 @@ class icunit_tb(icunit_cnct):
                             port_name = line_split[0].replace(".", "")
                             content[i] = content[i].replace("()", f"({port_name})")
                             direction = "logic"                            
-                            width = df[df['port'] == port_name]['width'].tolist()[0]
-                            if width == "1":
-                                width = ""
-                            width = width.replace(" ", "")
-                            insert_content = f"{direction} {width} {port_name},"
-                            content = self._find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
+                            try:
+                                width = df_portinfo[df_portinfo['port'] == port_name]['width'].tolist()[0]
+                                if width == "1":
+                                    width = ""
+                                width = width.replace(" ", "")
+                                insert_content = f"{direction} {width} {port_name},"
+                                content = self._find_anchor_insert(self.json_anchor['anchor_gen_wire_end'], content, insert_content)
+                            except:
+                                width = df_parainfo[df_parainfo['parameter'] == port_name]['default_value'].tolist()[0]
+                                width = width.replace(" ", "")
+                                width = width.replace(",", "")
+                                insert_content = f"parameter {port_name} = {width};"
+                                content = self._find_anchor_insert(self.json_anchor['anchor_gen_wire_begin'], content, insert_content)
                         elif ");" in content[i]:
                             break
         print(f"Finish post wiring the {gen_instance} in {gen_module}")
