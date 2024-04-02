@@ -4,6 +4,7 @@ import json
 import pandas as pd
 import numpy as np
 import warnings
+import math
 
 # ########################################################
 # ########################################################
@@ -66,6 +67,15 @@ class icrf_gen:
         return content
 
     def _icrf_gen_reg32b(self, content):
+        addr_len = math.ceil(math.log2(4*len(self.json_reg32b)))
+        print(f"Since the 32bits has 4 Byte, the address length is ceil(log2(4*NUM_REG)) = ceil(log2(4*{len(self.json_reg32b)})) = {addr_len}")
+
+
+        insert_content = f"logic rf_read_permitted_s;"
+        content = self._find_anchor_insert(self.json_anchor["anchor_gen_wire"], content, insert_content)
+        insert_content = f"logic rf_write_permitted_s;"
+        content = self._find_anchor_insert(self.json_anchor["anchor_gen_wire"], content, insert_content)
+        
         return content
 
     def _icrf_gen_customcode(self, content):
